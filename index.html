@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MC 风控工作台 · Risk Control Workbench</title>
+<title>风控工作台 · Risk Control Workbench</title>
 <style>
   :root {
     --bg-primary: #0a0e17; --bg-secondary: #111827; --bg-card: #1a2332;
@@ -280,7 +280,7 @@
     <div class="header-logo">🛡️</div>
     <div>
       <div class="header-title">MC 风控工作台</div>
-      <div class="header-subtitle">Merchant Control · Risk Control Workbench</div>
+      <div class="header-subtitle">Risk Control Workbench</div>
     </div>
   </div>
   <div class="header-right">
@@ -369,15 +369,15 @@
 
 <!-- ===== TAB 2: SOP ===== -->
 <div class="tab-content" id="tab-sop">
-<h2 style="font-size:16px;margin-bottom:16px;">📋 CFD 交易风控标准操作规程 (SOP)</h2>
+<h2 style="font-size:16px;margin-bottom:16px;">📋 交易风控标准操作规程 (SOP)</h2>
 <div class="sop-grid">
 <div class="card sop-card open">
   <div class="card-header" onclick="this.closest('.sop-card').classList.toggle('open')" style="cursor:pointer;">
-    <div style="display:flex;align-items:center;gap:10px;"><span class="sop-icon">🔍</span><div><div class="card-title">交易异常监控规则</div><div class="card-subtitle">Trading Anomaly Monitoring Rules · CFD</div></div></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span class="sop-icon">🔍</span><div><div class="card-title">交易异常监控规则</div><div class="card-subtitle">Trading Anomaly Monitoring Rules</div></div></div>
     <span class="sop-arrow chevron">▼</span>
   </div>
   <div class="sop-body">
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">以下规则为 MC Markets CFD 交易系统核心监控逻辑，覆盖交易品种异常、客户交易行为、大额交易三大类。</p>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">以下规则为交易系统核心监控逻辑，覆盖交易品种异常、客户交易行为、大额交易三大类。</p>
     <ul class="rule-list">
       <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种停价监控</strong><div style="font-size:12px;color:var(--text-muted);">任一交易品种连续停价 > 10s 自动触发预警，> 30s 自动暂停该品种交易并通知做市商。涵盖 EURUSD、BTCUSDC、XAUUSD、USOIL 等全部品种。</div></div></li>
       <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种错价监控</strong><div style="font-size:12px;color:var(--text-muted);">报价偏离市场参考价 > 0.5% 自动触发预警。若错价订单已成交，立即冻结相关账户待审。</div></div></li>
