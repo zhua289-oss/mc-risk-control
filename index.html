@@ -131,6 +131,25 @@
   }
   .metric-card:hover { border-color: var(--accent); transform: translateY(-1px); }
   .metric-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .tv {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px dashed transparent;
+    transition: all 0.15s;
+    font-weight: 600;
+    background: rgba(59,130,246,0.10);
+    min-width: 2em;
+  }
+  .tv:hover { border-color: var(--accent); background: rgba(59,130,246,0.18); }
+  .tv:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-input);
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.25);
+  }
+
   .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
   .metric-value { font-size: 28px; font-weight: 700; }
   .metric-change { font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
@@ -369,7 +388,7 @@
 
 <!-- ===== TAB 2: SOP ===== -->
 <div class="tab-content" id="tab-sop">
-<h2 style="font-size:16px;margin-bottom:16px;">📋 交易风控标准操作规程 (SOP)</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h2 style="font-size:16px;">📋 交易风控标准操作规程 (SOP)</h2><button class="btn btn-sm" onclick="openThresholdModal()" title="修改所有监控阈值">⚙️ 阈值配置</button></div>
 <div class="sop-grid">
 <div class="card sop-card open">
   <div class="card-header" onclick="this.closest('.sop-card').classList.toggle('open')" style="cursor:pointer;">
@@ -379,17 +398,17 @@
   <div class="sop-body">
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">以下规则为交易系统核心监控逻辑，覆盖交易品种异常、客户交易行为、大额交易三大类。</p>
     <ul class="rule-list">
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种停价监控</strong><div style="font-size:12px;color:var(--text-muted);">任一交易品种连续停价 > 10s 自动触发预警，> 30s 自动暂停该品种交易并通知做市商。涵盖 EURUSD、BTCUSDC、XAUUSD、USOIL 等全部品种。</div></div></li>
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种错价监控</strong><div style="font-size:12px;color:var(--text-muted);">报价偏离市场参考价 > 0.5% 自动触发预警。若错价订单已成交，立即冻结相关账户待审。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>交易品种价格延迟监控</strong><div style="font-size:12px;color:var(--text-muted);">报价延迟 ≥ 3s 触发预警并自动切换备用报价源；延迟 ≥ 1s 且 < 3s 触发黄色提醒。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>大额交易滑点监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易滑点 > 2% 或滑点绝对值 > 500 USDC，触发滑点异常预警，标记待人工复核。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户异常胜率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户近 7 天交易胜率 > 80%，触发异常胜率预警，自动限制该客户日内开仓次数。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>客户异常盈利率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户累计盈利金额 > 净入金（Deposit - Withdrawal）的 50%，触发异常盈利率预警。> 100% 自动限制出金。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>大额单笔交易监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易额 ≥ 100,000 USDC 自动触发预警，需 10 分钟内人工复核。累计 24h 交易额 ≥ 500,000 USDC 自动限制开仓。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>非交易时段大额交易</strong><div style="font-size:12px;color:var(--text-muted);">每日休市期间的单笔 ≥ 10,000 USDC 交易，触发非交易时段监控并自动延迟到开盘执行。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>出入金异常监控</strong><div style="font-size:12px;color:var(--text-muted);">单一账户 24h 内出金 > 100,000 USDC 且无对应交易记录，或短时间内大量小额出金（疑似拆分），触发预警。自动延迟出金并人工复核。（仅异常预警，流水台账归财务）</div></div></li>
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>净头寸 / 敞口监控</strong><div style="font-size:12px;color:var(--text-muted);">平台单一品种净多/净空头寸 > 做市商承诺流动性的 70%，触发敞口预警。> 100% 自动暂停该品种同向开仓并通知做市商补充流动性。按 EURUSD、BTCUSDC、XAUUSD、USOIL 等品种逐项监控。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户集中度预警</strong><div style="font-size:12px;color:var(--text-muted);">单一客户总敞口 > 平台总敞口的 20%，或单品种持仓 > 该品种总持仓的 30%，触发集中度预警。自动限制该客户继续加仓并通知风控评估。</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种停价监控</strong><div style="font-size:12px;color:var(--text-muted);">任一交易品种连续停价 > <span class="tv" contenteditable="true" data-tk="halt-10s">10s</span> 自动触发预警，> <span class="tv" contenteditable="true" data-tk="halt-30s">30s</span> 自动暂停该品种交易并通知做市商。涵盖 EURUSD、BTCUSDC、XAUUSD、USOIL 等全部品种。</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种错价监控</strong><div style="font-size:12px;color:var(--text-muted);">报价偏离市场参考价 > <span class="tv" contenteditable="true" data-tk="misprice-0.5">0.5%</span> 自动触发预警。若错价订单已成交，立即冻结相关账户待审。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>交易品种价格延迟监控</strong><div style="font-size:12px;color:var(--text-muted);">报价延迟 ≥ <span class="tv" contenteditable="true" data-tk="delay-3s">3s</span> 触发预警并自动切换备用报价源；延迟 ≥ <span class="tv" contenteditable="true" data-tk="delay-1s">1s</span> 且 < <span class="tv" contenteditable="true" data-tk="delay-3s">3s</span> 触发黄色提醒。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>大额交易滑点监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易滑点 > <span class="tv" contenteditable="true" data-tk="slip-2pct">2%</span> 或滑点绝对值 > <span class="tv" contenteditable="true" data-tk="slip-500">500 USDC</span>，触发滑点异常预警，标记待人工复核。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户异常胜率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户近 7 天交易胜率 > <span class="tv" contenteditable="true" data-tk="winrate-80">80%</span>，触发异常胜率预警，自动限制该客户日内开仓次数。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>客户异常盈利率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户累计盈利金额 > 净入金（Deposit - Withdrawal）的 <span class="tv" contenteditable="true" data-tk="profit-50">50%</span>，触发异常盈利率预警。> <span class="tv" contenteditable="true" data-tk="profit-100">100%</span> 自动限制出金。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>大额单笔交易监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易额 ≥ <span class="tv" contenteditable="true" data-tk="large-100k">100,000 USDC</span> 自动触发预警，需 10 分钟内人工复核。累计 24h 交易额 ≥ <span class="tv" contenteditable="true" data-tk="large-500k">500,000 USDC</span> 自动限制开仓。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>非交易时段大额交易</strong><div style="font-size:12px;color:var(--text-muted);">每日休市期间的单笔 ≥ <span class="tv" contenteditable="true" data-tk="after-10k">10,000 USDC</span> 交易，触发非交易时段监控并自动延迟到开盘执行。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>出入金异常监控</strong><div style="font-size:12px;color:var(--text-muted);">单一账户 24h 内出金 > <span class="tv" contenteditable="true" data-tk="wdraw-100k">100,000 USDC</span> 且无对应交易记录，或短时间内大量小额出金（疑似拆分），触发预警。自动延迟出金并人工复核。（仅异常预警，流水台账归财务）</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>净头寸 / 敞口监控</strong><div style="font-size:12px;color:var(--text-muted);">平台单一品种净多/净空头寸 > 做市商承诺流动性的 <span class="tv" contenteditable="true" data-tk="exposure-70">70%</span>，触发敞口预警。> <span class="tv" contenteditable="true" data-tk="exposure-100">100%</span> 自动暂停该品种同向开仓并通知做市商补充流动性。按 EURUSD、BTCUSDC、XAUUSD、USOIL 等品种逐项监控。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户集中度预警</strong><div style="font-size:12px;color:var(--text-muted);">单一客户总敞口 > 平台总敞口的 <span class="tv" contenteditable="true" data-tk="concen-20">20%</span>，或单品种持仓 > 该品种总持仓的 <span class="tv" contenteditable="true" data-tk="concen-30">30%</span>，触发集中度预警。自动限制该客户继续加仓并通知风控评估。</div></div></li>
     </ul>
   </div>
 </div>
@@ -401,9 +420,9 @@
   <div class="sop-body">
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">所有风险事件按「影响程度 × 发生概率」分级。评估维度：交易安全、客户资金安全、系统稳定性、市场影响。</p>
     <div class="class-grid">
-      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大客户资金损失或系统性风险</div><div class="class-items">• 交易品种停价 > 30s<br>• 错价订单已成交<br>• 净头寸 > 流动性 100%<br>• <strong>响应：5 分钟</strong></div></div>
-      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重影响交易</div><div class="class-items">• 停价 10-30s / 延迟 > 3s<br>• 敞口 > 流动性 70%<br>• 单客户集中度 > 30%<br>• <strong>响应：30 分钟</strong></div></div>
-      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 报价延迟 1-3s / 滑点 1-2%<br>• 出入金异常预警<br>• 客户盈利率 > 净入金 50%<br>• <strong>响应：2 小时</strong></div></div>
+      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大客户资金损失或系统性风险</div><div class="class-items">• 交易品种停价 > <span class="tv" contenteditable="true" data-tk="halt-30s">30s</span><br>• 错价订单已成交<br>• 净头寸 > 流动性 <span class="tv" contenteditable="true" data-tk="exposure-100">100%</span><br>• <strong>响应：5 分钟</strong></div></div>
+      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重影响交易</div><div class="class-items">• 停价 <span class="tv" contenteditable="true" data-tk="halt-10s">10s</span>-<span class="tv" contenteditable="true" data-tk="halt-30s">30s</span> / 延迟 > <span class="tv" contenteditable="true" data-tk="delay-3s">3s</span><br>• 敞口 > 流动性 <span class="tv" contenteditable="true" data-tk="exposure-70">70%</span><br>• 单客户集中度 > <span class="tv" contenteditable="true" data-tk="concen-30">30%</span><br>• <strong>响应：30 分钟</strong></div></div>
+      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 报价延迟 <span class="tv" contenteditable="true" data-tk="delay-1s">1s</span>-<span class="tv" contenteditable="true" data-tk="delay-3s">3s</span> / 滑点 <span class="tv" contenteditable="true" data-tk="slip-2pct">2%</span><br>• 出入金异常预警<br>• 客户盈利率 > 净入金 <span class="tv" contenteditable="true" data-tk="profit-50">50%</span><br>• <strong>响应：2 小时</strong></div></div>
       <div class="class-card low"><div class="class-name">🟢 低 · Low</div><div class="class-desc">常规监控项，例行处理</div><div class="class-items">• 偶发延迟 < 1s<br>• 小额滑点 (< 1%)<br>• 常规系统告警<br>• <strong>响应：24 小时</strong></div></div>
     </div>
   </div>
@@ -417,17 +436,17 @@
     <div class="table-wrap"><table>
       <thead><tr><th>预警类型</th><th>触发条件</th><th>阈值</th><th>自动动作</th><th>通知方式</th></tr></thead>
       <tbody>
-        <tr><td>品种停价预警</td><td>任一品种连续停价超时</td><td>> 10s</td><td>暂停该品种交易、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>错价预警</td><td>报价偏离市场参考价</td><td>> 0.5%</td><td>暂停品种、撤销异常订单</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>价格延迟预警</td><td>报价延迟超过阈值</td><td>≥ 3s</td><td>切换备用报价源</td><td>企业微信</td></tr>
-        <tr><td>滑点预警</td><td>单笔交易滑点超限</td><td>> 2% 或 > 500 USDC</td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
-        <tr><td>异常胜率预警</td><td>客户近7天胜率异常高</td><td>> 80%</td><td>限制日内开仓次数</td><td>企业微信</td></tr>
-        <tr><td>异常盈利率预警</td><td>盈利超过净入金比例</td><td>> 50%</td><td>限制出金、标记账户</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>大额交易预警</td><td>单笔交易额超过阈值</td><td>≥ 100,000 USDC</td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
-        <tr><td>非交易时段预警</td><td>休市期间大额交易</td><td>休市期间 ≥ 10,000 USDC</td><td>延迟到开盘执行</td><td>企业微信</td></tr>
-        <tr><td>出入金异常预警</td><td>24h 出金超限或无交易匹配</td><td>出金 > 100,000 USDC 或拆分模式</td><td>延迟出金、人工复核</td><td>企业微信 + 邮件</td></tr>
-        <tr><td>净头寸 / 敞口预警</td><td>单品种净头寸超流动性阈值</td><td>> 做市商流动性的 70%</td><td>暂停同向开仓、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>客户集中度预警</td><td>单客户敞口占比过高</td><td>> 平台 20% 或单品种 30%</td><td>限制加仓、通知风控评估</td><td>企业微信</td></tr>
+        <tr><td>品种停价预警</td><td>任一品种连续停价超时</td><td>> <span class="tv" contenteditable="true" data-tk="halt-10s">10s</span></td><td>暂停该品种交易、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>错价预警</td><td>报价偏离市场参考价</td><td>> <span class="tv" contenteditable="true" data-tk="misprice-0.5">0.5%</span></td><td>暂停品种、撤销异常订单</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>价格延迟预警</td><td>报价延迟超过阈值</td><td>≥ <span class="tv" contenteditable="true" data-tk="delay-3s">3s</span></td><td>切换备用报价源</td><td>企业微信</td></tr>
+        <tr><td>滑点预警</td><td>单笔交易滑点超限</td><td>> <span class="tv" contenteditable="true" data-tk="slip-2pct">2%</span> 或 > <span class="tv" contenteditable="true" data-tk="slip-500">500 USDC</span></td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>异常胜率预警</td><td>客户近7天胜率异常高</td><td>> <span class="tv" contenteditable="true" data-tk="winrate-80">80%</span></td><td>限制日内开仓次数</td><td>企业微信</td></tr>
+        <tr><td>异常盈利率预警</td><td>盈利超过净入金比例</td><td>> <span class="tv" contenteditable="true" data-tk="profit-50">50%</span></td><td>限制出金、标记账户</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>大额交易预警</td><td>单笔交易额超过阈值</td><td>≥ <span class="tv" contenteditable="true" data-tk="large-100k">100,000 USDC</span></td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>非交易时段预警</td><td>休市期间大额交易</td><td>休市期间 ≥ <span class="tv" contenteditable="true" data-tk="after-10k">10,000 USDC</span></td><td>延迟到开盘执行</td><td>企业微信</td></tr>
+        <tr><td>出入金异常预警</td><td>24h 出金超限或无交易匹配</td><td>出金 > <span class="tv" contenteditable="true" data-tk="wdraw-100k">100,000 USDC</span> 或拆分模式</td><td>延迟出金、人工复核</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>净头寸 / 敞口预警</td><td>单品种净头寸超流动性阈值</td><td>> 做市商流动性的 <span class="tv" contenteditable="true" data-tk="exposure-70">70%</span></td><td>暂停同向开仓、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>客户集中度预警</td><td>单客户敞口占比过高</td><td>> 平台 <span class="tv" contenteditable="true" data-tk="concen-20">20%</span> 或单品种 <span class="tv" contenteditable="true" data-tk="concen-30">30%</span></td><td>限制加仓、通知风控评估</td><td>企业微信</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -528,6 +547,25 @@
 </div>
 
 </div><!-- /main -->
+
+
+<!-- THRESHOLD CONFIG MODAL -->
+<div class="modal-overlay" id="thresholdOverlay">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-title">⚙️ 监控阈值配置</div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">修改后自动保存至本地，页面所有规则同步生效。点击「重置」恢复默认值。</p>
+    <div class="table-wrap" style="max-height:50vh;overflow-y:auto;">
+      <table>
+        <thead><tr><th>监控项</th><th>当前值</th><th>操作</th></tr></thead>
+        <tbody id="thresholdTableBody"></tbody>
+      </table>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn" onclick="resetThresholds()">🔄 恢复默认</button>
+      <button type="button" class="btn btn-primary" onclick="closeThresholdModal()">完成</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: 新增/编辑风险 -->
 <div class="modal-overlay" id="riskModalOverlay">
@@ -1013,13 +1051,13 @@ function generateMetricDetail(drillType) {
     body.innerHTML = halt_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无品种异常事件 ✅</td></tr>'
       : halt_data.map(r => `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`).join('');
   } else if (drillType === 'slippage') {
-    title.innerHTML = '📉 大额滑点明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">滑点 > 2% 或 > 500 USDC</span>';
+    title.innerHTML = '📉 大额滑点明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">滑点 > <span class="tv" contenteditable="true" data-tk="slip-2pct">2%</span> 或 > <span class="tv" contenteditable="true" data-tk="slip-500">500 USDC</span></span>';
     head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>交易品种</th><th>滑点详情</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
     const slip_data = SAMPLE_LARGE_WITHDRAWALS.filter(r => r[4].includes('滑点'));
     body.innerHTML = slip_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无滑点异常事件 ✅</td></tr>'
       : slip_data.map(r => `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`).join('');
   } else if (drillType === 'winrate') {
-    title.innerHTML = '🎯 异常胜率/盈利率客户 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">胜率 > 80% 或盈利率异常</span>';
+    title.innerHTML = '🎯 异常胜率/盈利率客户 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">胜率 > <span class="tv" contenteditable="true" data-tk="winrate-80">80%</span> 或盈利率异常</span>';
     head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>交易品种</th><th>异常描述</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
     const wr_data = SAMPLE_LARGE_WITHDRAWALS.filter(r => r[4].includes('胜率') || r[4].includes('盈利率'));
     body.innerHTML = wr_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无异常客户 ✅</td></tr>'
@@ -1099,7 +1137,131 @@ document.querySelectorAll('.metric-card[data-drill]').forEach(card => {
 // ============================================================
 // Init
 // ============================================================
+
+// ============================================================
+// Threshold Store
+// ============================================================
+const THRESHOLD_DEFAULTS = {
+  'halt-10s': '10s', 'halt-30s': '30s', 'misprice-0.5': '0.5%',
+  'delay-3s': '3s', 'delay-1s': '1s', 'slip-2pct': '2%', 'slip-500': '500 USDC',
+  'winrate-80': '80%', 'profit-50': '50%', 'profit-100': '100%',
+  'large-100k': '100,000 USDC', 'large-500k': '500,000 USDC', 'after-10k': '10,000 USDC',
+  'exposure-70': '70%', 'exposure-100': '100%',
+  'concen-20': '20%', 'concen-30': '30%', 'wdraw-100k': '100,000 USDC',
+};
+const THRESHOLD_LABELS = {
+  'halt-10s': '停价预警阈值', 'halt-30s': '停价暂停阈值', 'misprice-0.5': '错价偏离阈值',
+  'delay-3s': '延迟预警阈值', 'delay-1s': '延迟提醒阈值', 'slip-2pct': '滑点百分比阈值',
+  'slip-500': '滑点绝对值阈值', 'winrate-80': '胜率异常阈值', 'profit-50': '盈利率预警阈值',
+  'profit-100': '盈利率暂停阈值', 'large-100k': '大额单笔阈值', 'large-500k': '大额累计阈值',
+  'after-10k': '非交易时段阈值', 'exposure-70': '敞口预警阈值', 'exposure-100': '敞口暂停阈值',
+  'concen-20': '客户集中度平台阈值', 'concen-30': '客户集中度品种阈值', 'wdraw-100k': '出金异常阈值',
+};
+
+function loadThresholds() {
+  try {
+    const raw = localStorage.getItem('mc_risk_thresholds');
+    if (raw) {
+      const stored = JSON.parse(raw);
+      Object.keys(THRESHOLD_DEFAULTS).forEach(k => {
+        if (stored[k]) THRESHOLD_DEFAULTS[k] = stored[k];
+      });
+    }
+  } catch(e) {}
+}
+
+function saveThresholds() {
+  localStorage.setItem('mc_risk_thresholds', JSON.stringify(THRESHOLD_DEFAULTS));
+}
+
+function applyThresholds() {
+  loadThresholds();
+  document.querySelectorAll('.tv[data-tk]').forEach(el => {
+    const key = el.dataset.tk;
+    if (THRESHOLD_DEFAULTS[key]) {
+      el.textContent = THRESHOLD_DEFAULTS[key];
+    }
+  });
+}
+
+// Make threshold spans editable: save on blur
+function initThresholdEditors() {
+  document.querySelectorAll('.tv[data-tk]').forEach(el => {
+    el.addEventListener('blur', function() {
+      const key = this.dataset.tk;
+      const val = this.textContent.trim();
+      if (val && key) {
+        THRESHOLD_DEFAULTS[key] = val;
+        saveThresholds();
+        applyThresholds();
+        showToast('✅ 阈值已更新', 'success');
+      } else {
+        this.textContent = THRESHOLD_DEFAULTS[key] || '';
+      }
+    });
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+    });
+  });
+}
+
+// Threshold config modal
+function openThresholdModal() {
+  const tbody = document.getElementById('thresholdTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = Object.keys(THRESHOLD_LABELS).map(k => `
+    <tr>
+      <td>${THRESHOLD_LABELS[k]}</td>
+      <td><span class="tv" contenteditable="true" data-tk="${k}">${THRESHOLD_DEFAULTS[k]}</span></td>
+      <td><button class="btn btn-sm" onclick="resetOneThreshold('${k}')">↩ 默认</button></td>
+    </tr>
+  `).join('');
+  document.getElementById('thresholdOverlay').classList.add('open');
+  initThresholdEditors();
+}
+
+function closeThresholdModal() {
+  document.getElementById('thresholdOverlay').classList.remove('open');
+  applyThresholds();
+}
+
+function resetOneThreshold(key) {
+  THRESHOLD_DEFAULTS[key] = THRESHOLD_DEFAULTS[key]; // just re-apply default from original map
+  // Actually need original defaults
+  const ORIG = {
+    'halt-10s': '10s', 'halt-30s': '30s', 'misprice-0.5': '0.5%',
+    'delay-3s': '3s', 'delay-1s': '1s', 'slip-2pct': '2%', 'slip-500': '500 USDC',
+    'winrate-80': '80%', 'profit-50': '50%', 'profit-100': '100%',
+    'large-100k': '100,000 USDC', 'large-500k': '500,000 USDC', 'after-10k': '10,000 USDC',
+    'exposure-70': '70%', 'exposure-100': '100%',
+    'concen-20': '20%', 'concen-30': '30%', 'wdraw-100k': '100,000 USDC',
+  };
+  THRESHOLD_DEFAULTS[key] = ORIG[key];
+  saveThresholds();
+  openThresholdModal();
+  showToast('↩ 已恢复默认值', 'success');
+}
+
+function resetThresholds() {
+  const ORIG = {
+    'halt-10s': '10s', 'halt-30s': '30s', 'misprice-0.5': '0.5%',
+    'delay-3s': '3s', 'delay-1s': '1s', 'slip-2pct': '2%', 'slip-500': '500 USDC',
+    'winrate-80': '80%', 'profit-50': '50%', 'profit-100': '100%',
+    'large-100k': '100,000 USDC', 'large-500k': '500,000 USDC', 'after-10k': '10,000 USDC',
+    'exposure-70': '70%', 'exposure-100': '100%',
+    'concen-20': '20%', 'concen-30': '30%', 'wdraw-100k': '100,000 USDC',
+  };
+  Object.assign(THRESHOLD_DEFAULTS, ORIG);
+  saveThresholds();
+  openThresholdModal();
+  showToast('🔄 所有阈值已恢复默认', 'success');
+}
+
+
 function init() {
+  loadThresholds();
+  applyThresholds();
+  initThresholdEditors();
   loadRisks();
   renderRiskTable();
   updateMetrics();
@@ -1128,6 +1290,7 @@ function init() {
 
   // Close modals on backdrop click
   document.getElementById('riskModalOverlay').addEventListener('click', function(e) { if (e.target === this) closeRiskModal(); });
+  document.getElementById('thresholdOverlay').addEventListener('click', function(e) { if (e.target === this) closeThresholdModal(); });
   document.getElementById('confirmOverlay').addEventListener('click', function(e) { if (e.target === this) closeConfirm(); });
 
   // ESC to close
@@ -1135,6 +1298,7 @@ function init() {
     if (e.key === 'Escape') {
       closeRiskModal();
       closeConfirm();
+      closeThresholdModal();
     }
   });
 }
