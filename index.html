@@ -130,6 +130,7 @@
     padding: 20px; position: relative; overflow: hidden; cursor: pointer; transition: all 0.15s;
   }
   .metric-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .metric-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
   .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
   .metric-value { font-size: 28px; font-weight: 700; }
   .metric-change { font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
@@ -303,35 +304,46 @@
 <!-- ===== TAB 1: 资金监控 ===== -->
 <div class="tab-content active" id="tab-metrics">
   <div class="metrics-grid" id="metricsGrid">
-    <div class="metric-card danger" data-filter="emergency">
+    <div class="metric-card danger" data-drill="risk-emergency">
       <div class="metric-label">⚠️ 紧急风险项</div>
       <div class="metric-value" style="color:var(--danger);" id="countEmergency">--</div>
       <div class="metric-change up" style="font-size:11px;color:var(--text-muted);">点击查看详情 →</div>
     </div>
-    <div class="metric-card warning">
+    <div class="metric-card warning" data-drill="large-withdrawal">
       <div class="metric-label">🔺 大额异常出金笔数</div>
       <div class="metric-value" style="color:var(--warning);">12</div>
       <div class="metric-change up">↑ 3 笔 vs 昨日</div>
     </div>
-    <div class="metric-card">
+    <div class="metric-card" data-drill="netflow">
       <div class="metric-label">💰 当日总出入金差额</div>
       <div class="metric-value">-2,340,500</div>
       <div class="metric-change up">↑ 净流出增加 15%</div>
     </div>
-    <div class="metric-card">
+    <div class="metric-card" data-drill="anomaly-accounts">
       <div class="metric-label">👤 异常账户数</div>
       <div class="metric-value" id="countAnomalyAccounts">7</div>
       <div class="metric-change up">↑ 2 个新增异常</div>
     </div>
-    <div class="metric-card" data-filter="high">
+    <div class="metric-card" data-drill="risk-high">
       <div class="metric-label">🟠 高风险项</div>
       <div class="metric-value" style="color:#fdba74;" id="countHigh">--</div>
       <div class="metric-change" style="font-size:11px;color:var(--text-muted);">点击查看详情 →</div>
     </div>
-    <div class="metric-card">
+    <div class="metric-card" data-drill="risk-all">
       <div class="metric-label">📋 在跟风险总数</div>
       <div class="metric-value" id="countTotal">--</div>
       <div class="metric-change neutral" id="countActive">--</div>
+    </div>
+  </div>
+
+  <!-- 指标下钻详情面板 -->
+  <div class="card" id="metricDetailPanel" style="display:none;">
+    <div class="card-header">
+      <div class="card-title" id="metricDetailTitle"></div>
+      <button class="btn btn-sm btn-ghost" onclick="closeMetricDetail()">✕ 收起</button>
+    </div>
+    <div class="table-wrap">
+      <table><thead id="metricDetailHead"></thead><tbody id="metricDetailBody"></tbody></table>
     </div>
   </div>
 
@@ -952,19 +964,111 @@ function showToast(msg, type) {
 }
 
 // ============================================================
-// Metrics card click → navigate to risk tab with filter
+// Metrics card click → drill-down
 // ============================================================
-document.querySelectorAll('.metric-card[data-filter]').forEach(card => {
+const SAMPLE_LARGE_WITHDRAWALS = [
+  ['W-2026-0605-01','MC-01039','商户收款','¥12,800,000','大额拆分规则','06-05 18:32','emergency'],
+  ['W-2026-0605-02','MC-01039','商户收款','¥3,200,000','大额拆分规则','06-05 18:30','emergency'],
+  ['W-2026-0605-03','MC-01039','商户收款','¥2,800,000','大额拆分规则','06-05 18:28','emergency'],
+  ['W-2026-0605-04','MC-01039','商户收款','¥4,000,000','大额拆分规则','06-05 18:25','emergency'],
+  ['W-2026-0605-05','MC-00821','备付金','¥5,200,000','备付金充足率','06-05 14:15','high'],
+  ['W-2026-0605-06','MC-01204','新入网商户','¥3,450,000','新商户监控','06-05 09:22','high'],
+  ['W-2026-0605-07','MC-00988','商户收款','¥2,100,000','退款率监控','06-04 16:45','medium'],
+  ['W-2026-0605-08','MC-00550','商户收款','¥1,850,000','投诉关联','06-04 14:20','medium'],
+  ['W-2026-0605-09','MC-01039','商户收款','¥1,600,000','大额拆分规则','06-04 11:15','emergency'],
+  ['W-2026-0605-10','MC-00755','跨境结算','¥1,200,000','刷单/测试识别','06-04 22:10','medium'],
+  ['W-2026-0605-11','MC-00670','个人收款','¥980,000','关联账户识别','06-04 09:30','low'],
+  ['W-2026-0605-12','MC-01112','API接入','¥750,000','接口频率限制','06-04 11:30','high'],
+];
+
+const SAMPLE_ALL_ANOMALY = [
+  ['MC-2026-01039','商户收款账户','短时间内大额分散出金','¥12,800,000','大额拆分规则','emergency','06-05 18:32'],
+  ['MC-2026-00821','备付金账户','备付金比例跌破阈值','¥5,200,000','备付金充足率','high','06-05 14:15'],
+  ['MC-2026-01204','新入网商户','首日交易量异常激增','¥3,450,000','新商户监控','high','06-05 09:22'],
+  ['MC-2026-00755','跨境结算账户','频繁小额测试交易','¥86,000','刷单/测试识别','medium','06-04 22:10'],
+  ['MC-2026-00988','商户收款账户','退款率异常高','¥2,100,000','退款率监控','medium','06-04 16:45'],
+  ['MC-2026-01112','API接入商户','API调用频率异常','—','接口频率限制','low','06-04 11:30'],
+  ['MC-2026-00670','个人收款账户','同一IP多账户操作','¥580,000','关联账户识别','low','06-03 08:05'],
+];
+
+const levelClassMap = { emergency:'level-emergency', high:'level-high', medium:'level-medium', low:'level-low' };
+const levelNameMap = { emergency:'紧急', high:'高', medium:'中', low:'低' };
+
+function generateMetricDetail(drillType) {
+  const panel = document.getElementById('metricDetailPanel');
+  const title = document.getElementById('metricDetailTitle');
+  const head = document.getElementById('metricDetailHead');
+  const body = document.getElementById('metricDetailBody');
+
+  if (drillType === 'large-withdrawal') {
+    title.innerHTML = '🔺 大额异常出金明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">共 12 笔 · 合计 ¥40,130,000</span>';
+    head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>账户类型</th><th>金额</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
+    body.innerHTML = SAMPLE_LARGE_WITHDRAWALS.map(r =>
+      `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="color:var(--danger);">${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`
+    ).join('');
+  } else if (drillType === 'anomaly-accounts') {
+    title.innerHTML = '👤 异常账户明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">共 7 个异常账户</span>';
+    head.innerHTML = '<tr><th>账户ID</th><th>账户类型</th><th>异常类型</th><th>涉及金额</th><th>触发规则</th><th>等级</th><th>发现时间</th></tr>';
+    body.innerHTML = SAMPLE_ALL_ANOMALY.map(r =>
+      `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="color:var(--danger);">${r[3]}</td><td>${r[4]}</td><td><span class="level-tag ${levelClassMap[r[5]]}">${levelNameMap[r[5]]}</span></td><td>${r[6]}</td></tr>`
+    ).join('');
+  } else if (drillType === 'netflow') {
+    title.innerHTML = '💰 近7天出入金明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">单笔 ≥ ¥500,000</span>';
+    head.innerHTML = '<tr><th>日期</th><th>大额入金笔数</th><th>大额出金笔数</th><th>净流量</th><th>异常标注</th></tr>';
+    const data = [
+      ['06-05','47','59','-12','⚠️ 净流出偏高'],
+      ['06-04','52','55','-3','—'],
+      ['06-03','61','48','+13','—'],
+      ['06-02','44','42','+2','—'],
+      ['06-01','58','50','+8','—'],
+      ['05-31','49','46','+3','—'],
+      ['05-30','55','53','+2','—'],
+    ];
+    body.innerHTML = data.map(r => {
+      const netClr = parseInt(r[3]) < 0 ? 'color:var(--danger);' : 'color:var(--success);';
+      return `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="${netClr}">${r[3]}</td><td>${r[4]}</td></tr>`;
+    }).join('');
+  }
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeMetricDetail() {
+  document.getElementById('metricDetailPanel').style.display = 'none';
+  document.querySelectorAll('.metric-card').forEach(c => c.classList.remove('selected'));
+}
+
+// Attach click handlers to all metric cards
+document.querySelectorAll('.metric-card[data-drill]').forEach(card => {
   card.addEventListener('click', () => {
-    const level = card.dataset.filter;
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelector('[data-tab="tab-risks"]').classList.add('active');
-    document.getElementById('tab-risks').classList.add('active');
-    document.getElementById('filterLevel').value = level;
-    renderRiskTable();
+    const drill = card.dataset.drill;
+    document.querySelectorAll('.metric-card').forEach(c => c.classList.remove('selected'));
+
+    if (drill === 'risk-emergency') {
+      navigateToRisks('emergency');
+      return;
+    }
+    if (drill === 'risk-high') {
+      navigateToRisks('high');
+      return;
+    }
+    if (drill === 'risk-all') {
+      navigateToRisks('');
+      return;
+    }
+    card.classList.add('selected');
+    generateMetricDetail(drill);
   });
 });
+
+function navigateToRisks(level) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-tab="tab-risks"]').classList.add('active');
+  document.getElementById('tab-risks').classList.add('active');
+  document.getElementById('filterLevel').value = level;
+  renderRiskTable();
+}
 
 // ============================================================
 // Init
