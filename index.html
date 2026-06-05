@@ -387,7 +387,9 @@
       <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>客户异常盈利率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户累计盈利金额 > 净入金（Deposit - Withdrawal）的 50%，触发异常盈利率预警。> 100% 自动限制出金。</div></div></li>
       <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>大额单笔交易监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易额 ≥ 100,000 USDC 自动触发预警，需 10 分钟内人工复核。累计 24h 交易额 ≥ 500,000 USDC 自动限制开仓。</div></div></li>
       <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>非交易时段大额交易</strong><div style="font-size:12px;color:var(--text-muted);">每日休市期间的单笔 ≥ 10,000 USDC 交易，触发非交易时段监控并自动延迟到开盘执行。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>出入金异常监控</strong><div style="font-size:12px;color:var(--text-muted);">单一账户 24h 内出金 > 100,000 USDC 且无对应交易记录，或短时间内大量小额出金（疑似拆分），触发预警。自动延迟出金并人工复核。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>出入金异常监控</strong><div style="font-size:12px;color:var(--text-muted);">单一账户 24h 内出金 > 100,000 USDC 且无对应交易记录，或短时间内大量小额出金（疑似拆分），触发预警。自动延迟出金并人工复核。（仅异常预警，流水台账归财务）</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>净头寸 / 敞口监控</strong><div style="font-size:12px;color:var(--text-muted);">平台单一品种净多/净空头寸 > 做市商承诺流动性的 70%，触发敞口预警。> 100% 自动暂停该品种同向开仓并通知做市商补充流动性。按 EURUSD、BTCUSDC、XAUUSD、USOIL 等品种逐项监控。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户集中度预警</strong><div style="font-size:12px;color:var(--text-muted);">单一客户总敞口 > 平台总敞口的 20%，或单品种持仓 > 该品种总持仓的 30%，触发集中度预警。自动限制该客户继续加仓并通知风控评估。</div></div></li>
     </ul>
   </div>
 </div>
@@ -399,9 +401,9 @@
   <div class="sop-body">
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">所有风险事件按「影响程度 × 发生概率」分级。评估维度：交易安全、客户资金安全、系统稳定性、市场影响。</p>
     <div class="class-grid">
-      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大客户资金损失或系统性风险</div><div class="class-items">• 交易品种停价 > 30s<br>• 错价订单已成交<br>• 客户盈利率 > 净入金 100%<br>• <strong>响应：5 分钟</strong></div></div>
-      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重影响交易</div><div class="class-items">• 停价 10-30s / 延迟 > 3s<br>• 滑点 > 2% 或 > 500 USDC<br>• 客户胜率 > 80%<br>• <strong>响应：30 分钟</strong></div></div>
-      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 报价延迟 1-3s<br>• 滑点 1%-2%<br>• 客户盈利率 > 净入金 50%<br>• <strong>响应：2 小时</strong></div></div>
+      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大客户资金损失或系统性风险</div><div class="class-items">• 交易品种停价 > 30s<br>• 错价订单已成交<br>• 净头寸 > 流动性 100%<br>• <strong>响应：5 分钟</strong></div></div>
+      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重影响交易</div><div class="class-items">• 停价 10-30s / 延迟 > 3s<br>• 敞口 > 流动性 70%<br>• 单客户集中度 > 30%<br>• <strong>响应：30 分钟</strong></div></div>
+      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 报价延迟 1-3s / 滑点 1-2%<br>• 出入金异常预警<br>• 客户盈利率 > 净入金 50%<br>• <strong>响应：2 小时</strong></div></div>
       <div class="class-card low"><div class="class-name">🟢 低 · Low</div><div class="class-desc">常规监控项，例行处理</div><div class="class-items">• 偶发延迟 < 1s<br>• 小额滑点 (< 1%)<br>• 常规系统告警<br>• <strong>响应：24 小时</strong></div></div>
     </div>
   </div>
@@ -424,6 +426,8 @@
         <tr><td>大额交易预警</td><td>单笔交易额超过阈值</td><td>≥ 100,000 USDC</td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
         <tr><td>非交易时段预警</td><td>休市期间大额交易</td><td>休市期间 ≥ 10,000 USDC</td><td>延迟到开盘执行</td><td>企业微信</td></tr>
         <tr><td>出入金异常预警</td><td>24h 出金超限或无交易匹配</td><td>出金 > 100,000 USDC 或拆分模式</td><td>延迟出金、人工复核</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>净头寸 / 敞口预警</td><td>单品种净头寸超流动性阈值</td><td>> 做市商流动性的 70%</td><td>暂停同向开仓、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>客户集中度预警</td><td>单客户敞口占比过高</td><td>> 平台 20% 或单品种 30%</td><td>限制加仓、通知风控评估</td><td>企业微信</td></tr>
       </tbody>
     </table></div>
   </div>
