@@ -345,10 +345,10 @@
       <table>
         <thead><tr><th>账户ID</th><th>账户类型</th><th>异常类型</th><th>涉及金额</th><th>触发规则</th><th>风险等级</th><th>发现时间</th><th>操作</th></tr></thead>
         <tbody id="anomalyTable">
-          <tr><td>MC-2026-01039</td><td>商户收款账户</td><td>短时间内大额分散出金</td><td style="color:var(--danger);">¥12,800,000</td><td>大额拆分规则</td><td><span class="level-tag level-emergency">紧急</span></td><td>06-05 18:32</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-01039拆分出金','emergency','Rockey')">+ 建风险项</button></td></tr>
-          <tr><td>MC-2026-00821</td><td>备付金账户</td><td>备付金比例跌破阈值</td><td>¥5,200,000</td><td>备付金充足率</td><td><span class="level-tag level-high">高</span></td><td>06-05 14:15</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('备付金比例低于15%','high','Mark')">+ 建风险项</button></td></tr>
-          <tr><td>MC-2026-01204</td><td>新入网商户</td><td>首日交易量异常激增</td><td>¥3,450,000</td><td>新商户监控</td><td><span class="level-tag level-high">高</span></td><td>06-05 09:22</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('新商户MC-01204首日交易激增','high','Elaine')">+ 建风险项</button></td></tr>
-          <tr><td>MC-2026-00755</td><td>跨境结算账户</td><td>频繁小额测试交易</td><td>¥86,000</td><td>刷单/测试识别</td><td><span class="level-tag level-medium">中</span></td><td>06-04 22:10</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-00755频繁测试交易','medium','Rockey')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-01039</td><td>商户收款账户</td><td>短时间内大额分散出金</td><td style="color:var(--danger);">¥12,800,000</td><td>大额拆分规则</td><td><span class="level-tag level-emergency">紧急</span></td><td>06-05 18:32</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-01039拆分出金','emergency','风控组 Rockey')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-00821</td><td>备付金账户</td><td>备付金比例跌破阈值</td><td>¥5,200,000</td><td>备付金充足率</td><td><span class="level-tag level-high">高</span></td><td>06-05 14:15</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('备付金比例低于15%','high','风控组 Mark')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-01204</td><td>新入网商户</td><td>首日交易量异常激增</td><td>¥3,450,000</td><td>新商户监控</td><td><span class="level-tag level-high">高</span></td><td>06-05 09:22</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('新商户MC-01204首日交易激增','high','风控组 Elaine')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-00755</td><td>跨境结算账户</td><td>频繁小额测试交易</td><td>¥86,000</td><td>刷单/测试识别</td><td><span class="level-tag level-medium">中</span></td><td>06-04 22:10</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-00755频繁测试交易','medium','风控组 Rockey')">+ 建风险项</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -498,12 +498,12 @@
   <div class="table-wrap"><table>
     <thead><tr><th>角色</th><th>姓名</th><th>联系电话</th><th>企业微信</th><th>备注</th></tr></thead>
     <tbody>
-      <tr><td>CRO · 首席风控官</td><td>George</td><td>138-xxxx-0101</td><td>@george</td><td>紧急事项唯一决策人</td></tr>
-      <tr><td>风控总监</td><td>Mark</td><td>139-xxxx-0202</td><td>@mark</td><td>高风险事项审批</td></tr>
-      <tr><td>风控经理</td><td>Willow</td><td>136-xxxx-0303</td><td>@willow</td><td>中风险事项审批</td></tr>
-      <tr><td>风控值班 · 一组</td><td>Rockey</td><td>137-xxxx-0404</td><td>@rockey</td><td>7×24 值班电话</td></tr>
-      <tr><td>风控值班 · 二组</td><td>Elaine</td><td>135-xxxx-0505</td><td>@elaine</td><td>7×24 值班电话</td></tr>
-      <tr><td>技术值班</td><td>George</td><td>133-xxxx-0606</td><td>@george</td><td>系统故障响应</td></tr>
+      <tr><td>CRO · 首席风控官</td><td>风控组 George</td><td>138-xxxx-0101</td><td>@george</td><td>紧急事项唯一决策人</td></tr>
+      <tr><td>风控总监</td><td>风控组 Mark</td><td>139-xxxx-0202</td><td>@mark</td><td>高风险事项审批</td></tr>
+      <tr><td>风控经理</td><td>风控组 Willow</td><td>136-xxxx-0303</td><td>@willow</td><td>中风险事项审批</td></tr>
+      <tr><td>风控值班 · 一组</td><td>风控组 Rockey</td><td>137-xxxx-0404</td><td>@rockey</td><td>7×24 值班电话</td></tr>
+      <tr><td>风控值班 · 二组</td><td>风控组 Elaine</td><td>135-xxxx-0505</td><td>@elaine</td><td>7×24 值班电话</td></tr>
+      <tr><td>技术值班</td><td>风控组 Hoare</td><td>133-xxxx-0606</td><td>@hoare</td><td>系统故障响应</td></tr>
     </tbody>
   </table></div>
 </div>
@@ -544,13 +544,14 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="form-group">
           <label class="form-label">责任人 *</label>
-          <input class="form-input" id="riskOwner" required placeholder="例如：Rockey" list="ownerList">
+          <input class="form-input" id="riskOwner" required placeholder="例如：风控组 Rockey" list="ownerList">
           <datalist id="ownerList">
-            <option value="Rockey">
-            <option value="George">
-            <option value="Mark">
-            <option value="Elaine">
-            <option value="Willow">
+            <option value="风控组 Rockey">
+            <option value="风控组 George">
+            <option value="风控组 Mark">
+            <option value="风控组 Elaine">
+            <option value="风控组 Willow">
+            <option value="风控组 Hoare">
           </datalist>
         </div>
         <div class="form-group">
@@ -585,7 +586,7 @@
 // 数据层：风险项存储 (localStorage)
 // ============================================================
 const STORAGE_KEY = 'mc_risk_items';
-const OWNERS = ['Rockey', 'George', 'Mark', 'Elaine', 'Willow'];
+const OWNERS = ['风控组 Rockey', '风控组 George', '风控组 Mark', '风控组 Elaine', '风控组 Willow', '风控组 Hoare'];
 
 const LEVEL_NAMES = { emergency: '紧急', high: '高', medium: '中', low: '低' };
 const STATUS_NAMES = { active: '处理中', pending: '待确认', escalated: '已上报', resolved: '已解决' };
@@ -594,18 +595,18 @@ const STATUS_ORDER = { active: 0, pending: 1, escalated: 2, resolved: 3 };
 
 function getDefaultRisks() {
   return [
-    { id: 'RK-2026-042', desc: '商户 MC-01039 疑似拆分大额出金，连续3日累计出金12.8M，资金流向多个个人账户', level: 'emergency', owner: 'Rockey', status: 'active', foundDate: '2026-06-03', updated: '2026-06-05 18:32' },
-    { id: 'RK-2026-041', desc: '备付金账户余额跌破 15% 警戒线，当前比例 12.3%，需紧急补充', level: 'emergency', owner: 'Mark', status: 'escalated', foundDate: '2026-06-04', updated: '2026-06-05 14:15' },
-    { id: 'RK-2026-040', desc: '新入网商户 MC-01204 首日交易量异常激增至 3.45M，疑似批量注册套现', level: 'high', owner: 'Elaine', status: 'active', foundDate: '2026-06-05', updated: '2026-06-05 09:22' },
-    { id: 'RK-2026-039', desc: '跨境结算通道延迟上升，部分交易到达时间超过 SLA（T+1 → T+2），影响商户体验', level: 'high', owner: 'Willow', status: 'active', foundDate: '2026-06-02', updated: '2026-06-05 10:00' },
-    { id: 'RK-2026-038', desc: '某 API 商户接口调用量突增 300%，疑似被爬取或 API 密钥泄露', level: 'medium', owner: 'George', status: 'pending', foundDate: '2026-06-04', updated: '2026-06-04 16:00' },
-    { id: 'RK-2026-037', desc: '商户 MC-00988 近7天退款率 22%，超过 15% 阈值，涉及品类为虚拟商品', level: 'medium', owner: 'Elaine', status: 'active', foundDate: '2026-06-01', updated: '2026-06-04 16:45' },
-    { id: 'RK-2026-036', desc: '风控规则引擎 v2.3 灰度发布后偶发误拦截，影响正常商户交易成功率下降 1.2%', level: 'medium', owner: 'George', status: 'active', foundDate: '2026-05-30', updated: '2026-06-03 11:20' },
-    { id: 'RK-2026-035', desc: '商户 MC-00550 连续收到 5 笔消费者投诉（未授权扣款），已先行冻结', level: 'medium', owner: 'Rockey', status: 'escalated', foundDate: '2026-05-28', updated: '2026-06-02 09:15' },
-    { id: 'RK-2026-034', desc: '系统日志发现同 IP（203.0.113.x）关联 7 个账户，疑似团伙操作', level: 'low', owner: 'Rockey', status: 'pending', foundDate: '2026-06-03', updated: '2026-06-03 08:05' },
-    { id: 'RK-2026-033', desc: '月度 AML 合规自查报告中 2 项整改项逾期未关闭', level: 'low', owner: 'Mark', status: 'pending', foundDate: '2026-05-25', updated: '2026-06-01 17:00' },
-    { id: 'RK-2026-032', desc: '部分商户结算账户因银行渠道维护延迟入账，影响 ≤ T+1 SLA', level: 'low', owner: 'Willow', status: 'resolved', foundDate: '2026-05-31', updated: '2026-06-02 14:30' },
-    { id: 'RK-2026-031', desc: '监控看板数据源 API 偶发超时 2s+，影响实时性，需排查后端性能', level: 'low', owner: 'George', status: 'resolved', foundDate: '2026-05-29', updated: '2026-06-01 10:00' },
+    { id: 'RK-2026-042', desc: '商户 MC-01039 疑似拆分大额出金，连续3日累计出金12.8M，资金流向多个个人账户', level: 'emergency', owner: '风控组 Rockey', status: 'active', foundDate: '2026-06-03', updated: '2026-06-05 18:32' },
+    { id: 'RK-2026-041', desc: '备付金账户余额跌破 15% 警戒线，当前比例 12.3%，需紧急补充', level: 'emergency', owner: '风控组 Mark', status: 'escalated', foundDate: '2026-06-04', updated: '2026-06-05 14:15' },
+    { id: 'RK-2026-040', desc: '新入网商户 MC-01204 首日交易量异常激增至 3.45M，疑似批量注册套现', level: 'high', owner: '风控组 Elaine', status: 'active', foundDate: '2026-06-05', updated: '2026-06-05 09:22' },
+    { id: 'RK-2026-039', desc: '跨境结算通道延迟上升，部分交易到达时间超过 SLA（T+1 → T+2），影响商户体验', level: 'high', owner: '风控组 Willow', status: 'active', foundDate: '2026-06-02', updated: '2026-06-05 10:00' },
+    { id: 'RK-2026-038', desc: '某 API 商户接口调用量突增 300%，疑似被爬取或 API 密钥泄露', level: 'medium', owner: '风控组 George', status: 'pending', foundDate: '2026-06-04', updated: '2026-06-04 16:00' },
+    { id: 'RK-2026-037', desc: '商户 MC-00988 近7天退款率 22%，超过 15% 阈值，涉及品类为虚拟商品', level: 'medium', owner: '风控组 Elaine', status: 'active', foundDate: '2026-06-01', updated: '2026-06-04 16:45' },
+    { id: 'RK-2026-036', desc: '风控规则引擎 v2.3 灰度发布后偶发误拦截，影响正常商户交易成功率下降 1.2%', level: 'medium', owner: '风控组 George', status: 'active', foundDate: '2026-05-30', updated: '2026-06-03 11:20' },
+    { id: 'RK-2026-035', desc: '商户 MC-00550 连续收到 5 笔消费者投诉（未授权扣款），已先行冻结', level: 'medium', owner: '风控组 Rockey', status: 'escalated', foundDate: '2026-05-28', updated: '2026-06-02 09:15' },
+    { id: 'RK-2026-034', desc: '系统日志发现同 IP（203.0.113.x）关联 7 个账户，疑似团伙操作', level: 'low', owner: '风控组 Rockey', status: 'pending', foundDate: '2026-06-03', updated: '2026-06-03 08:05' },
+    { id: 'RK-2026-033', desc: '月度 AML 合规自查报告中 2 项整改项逾期未关闭', level: 'low', owner: '风控组 Mark', status: 'pending', foundDate: '2026-05-25', updated: '2026-06-01 17:00' },
+    { id: 'RK-2026-032', desc: '部分商户结算账户因银行渠道维护延迟入账，影响 ≤ T+1 SLA', level: 'low', owner: '风控组 Willow', status: 'resolved', foundDate: '2026-05-31', updated: '2026-06-02 14:30' },
+    { id: 'RK-2026-031', desc: '监控看板数据源 API 偶发超时 2s+，影响实时性，需排查后端性能', level: 'low', owner: '风控组 George', status: 'resolved', foundDate: '2026-05-29', updated: '2026-06-01 10:00' },
   ];
 }
 
