@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MC 风控看板 · Risk Control Dashboard</title>
+<style>
+  :root {
+    --bg-primary: #0a0e17;
+    --bg-secondary: #111827;
+    --bg-card: #1a2332;
+    --bg-card-hover: #1f2b3b;
+    --border: #1e2d3f;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59,130,246,0.15);
+    --danger: #ef4444;
+    --danger-bg: rgba(239,68,68,0.12);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245,158,11,0.12);
+    --success: #10b981;
+    --success-bg: rgba(16,185,129,0.12);
+    --info: #06b6d4;
+    --urgent: #dc2626;
+    --high: #f97316;
+    --medium: #eab308;
+    --low: #22c55e;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  /* Header */
+  .header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700;
+  }
+  .header-title { font-size: 18px; font-weight: 700; }
+  .header-subtitle { font-size: 12px; color: var(--text-muted); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .live-dot {
+    width: 8px; height: 8px; background: var(--success);
+    border-radius: 50%; display: inline-block;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .last-update { font-size: 12px; color: var(--text-muted); }
+
+  /* Tabs */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .nav-tab:hover { color: var(--text-primary); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Main Content */
+  .main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title { font-size: 16px; font-weight: 600; }
+  .card-subtitle { font-size: 12px; color: var(--text-muted); }
+
+  /* SOP Section */
+  .sop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 16px;
+  }
+  .sop-card { cursor: pointer; }
+  .sop-card .card-header { margin-bottom: 0; }
+  .sop-icon { font-size: 20px; }
+  .sop-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.35s ease, margin-top 0.35s ease;
+    margin-top: 0;
+  }
+  .sop-card.open .sop-body {
+    max-height: 2000px;
+    margin-top: 16px;
+  }
+  .sop-card.open .sop-arrow { transform: rotate(180deg); }
+  .sop-arrow { transition: transform 0.3s; font-size: 12px; color: var(--text-muted); }
+
+  /* Risk Levels */
+  .level-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .level-emergency { background: rgba(220,38,38,0.2); color: #fca5a5; }
+  .level-high { background: rgba(249,115,22,0.2); color: #fdba74; }
+  .level-medium { background: rgba(234,179,8,0.2); color: #fde047; }
+  .level-low { background: rgba(34,197,94,0.2); color: #86efac; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left; padding: 10px 12px;
+    color: var(--text-muted); font-weight: 600;
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(30,45,63,0.5);
+    vertical-align: middle;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Status badges */
+  .status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .status-active { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+  .status-pending { background: rgba(245,158,11,0.15); color: #fcd34d; }
+  .status-resolved { background: rgba(100,116,139,0.15); color: #94a3b8; }
+  .status-escalated { background: rgba(239,68,68,0.15); color: #fca5a5; }
+
+  /* Metrics Grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .metric-value { font-size: 28px; font-weight: 700; }
+  .metric-change {
+    font-size: 12px; margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .metric-change.up { color: var(--danger); }
+  .metric-change.down { color: var(--success); }
+  .metric-change.neutral { color: var(--text-muted); }
+  .metric-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .metric-card.danger::after { background: radial-gradient(circle, var(--danger-bg) 0%, transparent 70%); }
+  .metric-card.warning::after { background: radial-gradient(circle, var(--warning-bg) 0%, transparent 70%); }
+
+  /* Flow Chart */
+  .flow-steps {
+    display: flex; align-items: flex-start;
+    gap: 0; flex-wrap: wrap;
+  }
+  .flow-step {
+    flex: 1; min-width: 160px;
+    text-align: center; padding: 16px 8px;
+    position: relative;
+  }
+  .flow-step::after {
+    content: '→';
+    position: absolute;
+    right: -4px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .flow-step:last-child::after { display: none; }
+  .flow-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+    font-size: 20px;
+  }
+  .flow-icon.blue { background: rgba(59,130,246,0.2); }
+  .flow-icon.yellow { background: rgba(245,158,11,0.2); }
+  .flow-icon.red { background: rgba(239,68,68,0.2); }
+  .flow-icon.green { background: rgba(16,185,129,0.2); }
+  .flow-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .flow-desc { font-size: 11px; color: var(--text-muted); }
+
+  /* Rule checklist */
+  .rule-list {
+    list-style: none; display: flex; flex-direction: column; gap: 8px;
+  }
+  .rule-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.02);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--border);
+  }
+  .rule-item.trigger { border-left-color: var(--accent); }
+  .rule-item.warn { border-left-color: var(--warning); }
+  .rule-item.critical { border-left-color: var(--danger); }
+  .rule-bullet { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Classification table */
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+  }
+  .class-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    border-top: 3px solid transparent;
+  }
+  .class-card.urgent { border-top-color: var(--urgent); background: rgba(220,38,38,0.04); }
+  .class-card.high { border-top-color: var(--high); background: rgba(249,115,22,0.04); }
+  .class-card.medium { border-top-color: var(--medium); background: rgba(234,179,8,0.04); }
+  .class-card.low { border-top-color: var(--low); background: rgba(34,197,94,0.04); }
+  .class-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .class-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+  .class-items { font-size: 12px; color: var(--text-muted); line-height: 1.8; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .header { padding: 12px 16px; }
+    .nav-tabs { padding: 0 12px; }
+    .main { padding: 16px; }
+    .sop-grid { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .flow-steps { flex-direction: column; }
+    .flow-step::after { display: none; }
+    .metric-value { font-size: 22px; }
+  }
+
+  /* Search */
+  .search-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    color: var(--text-primary);
+    font-size: 13px;
+    width: 240px;
+    outline: none;
+    font-family: inherit;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text-muted); }
+
+  /* Pulse indicator for emergency items */
+  .pulse-badge {
+    animation: pulse-badge 1.5s infinite;
+  }
+  @keyframes pulse-badge {
+    0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+  }
+
+  /* Toggle arrow */
+  .chevron {
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+  .open .chevron { transform: rotate(180deg); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">🛡️</div>
+    <div>
+      <div class="header-title">MC 风控看板</div>
+      <div class="header-subtitle">Merchant Control · Risk Management Dashboard</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="live-dot"></span>
+    <span style="font-size:12px;color:var(--success);">系统运行中</span>
+    <span class="last-update">更新于 <span id="updateTime">---</span></span>
+  </div>
+</div>
+
+<!-- NAVIGATION TABS -->
+<div class="nav-tabs">
+  <button class="nav-tab active" data-tab="tab-metrics">📊 资金监控</button>
+  <button class="nav-tab" data-tab="tab-sop">📋 SOP 文档</button>
+  <button class="nav-tab" data-tab="tab-risks">⚠️ 风险清单</button>
+  <button class="nav-tab" data-tab="tab-flow">🔄 上报流程</button>
+</div>
+
+<div class="main">
+
+<!-- ===== TAB 1: 资金监控指标 ===== -->
+<div class="tab-content active" id="tab-metrics">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+    <h2 style="font-size:16px;">关键资金监控指标</h2>
+    <select style="background:var(--bg-card);border:1px solid var(--border);color:var(--text-primary);padding:6px 12px;border-radius:var(--radius);font-size:12px;font-family:inherit;">
+      <option>最近24小时</option>
+      <option>最近7天</option>
+      <option>最近30天</option>
+    </select>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card danger">
+      <div class="metric-label">⚠️ 大额异常出金笔数</div>
+      <div class="metric-value" style="color:var(--danger);">12</div>
+      <div class="metric-change up">↑ 3 笔 vs 昨日</div>
+    </div>
+    <div class="metric-card warning">
+      <div class="metric-label">🔺 单笔超限交易</div>
+      <div class="metric-value" style="color:var(--warning);">8,560,000</div>
+      <div class="metric-change neutral">≈ 与昨日持平</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">💰 当日总出入金差额</div>
+      <div class="metric-value">-2,340,500</div>
+      <div class="metric-change up">↑ 净流出增加 15%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">👤 异常账户数</div>
+      <div class="metric-value">7</div>
+      <div class="metric-change up">↑ 2 个新增异常</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">📊 敞口风险敞口率</div>
+      <div class="metric-value">18.7%</div>
+      <div class="metric-change up">↑ 2.1pp</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">🔄 频繁交易账户</div>
+      <div class="metric-value">23</div>
+      <div class="metric-change neutral">→ 稳定</div>
+    </div>
+  </div>
+
+  <!-- 异常账户明细 -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">🚨 异常账户监控明细</div>
+        <div class="card-subtitle">近7天触发异常规则的账户</div>
+      </div>
+      <span class="level-tag level-emergency pulse-badge">实时监控中</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>账户ID</th>
+            <th>账户类型</th>
+            <th>异常类型</th>
+            <th>涉及金额</th>
+            <th>触发规则</th>
+            <th>风险等级</th>
+            <th>发现时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>MC-2026-01039</td>
+            <td>商户收款账户</td>
+            <td>短时间内大额分散出金</td>
+            <td style="color:var(--danger);">¥12,800,000</td>
+            <td>大额拆分规则</td>
+            <td><span class="level-tag level-emergency">紧急</span></td>
+            <td>06-05 18:32</td>
+          </tr>
+          <tr>
+            <td>MC-2026-00821</td>
+            <td>备付金账户</td>
+            <td>备付金比例跌破阈值</td>
+            <td>¥5,200,000</td>
+            <td>备付金充足率</td>
+            <td><span class="level-tag level-high">高</span></td>
+            <td>06-05 14:15</td>
+          </tr>
+          <tr>
+            <td>MC-2026-01204</td>
+            <td>新入网商户</td>
+            <td>首日交易量异常激增</td>
+            <td>¥3,450,000</td>
+            <td>新商户监控</td>
+            <td><span class="level-tag level-high">高</span></td>
+            <td>06-05 09:22</td>
+          </tr>
+          <tr>
+            <td>MC-2026-00755</td>
+            <td>跨境结算账户</td>
+            <td>频繁小额测试交易</td>
+            <td>¥86,000</td>
+            <td>刷单/测试识别</td>
+            <td><span class="level-tag level-medium">中</span></td>
+            <td>06-04 22:10</td>
+          </tr>
+          <tr>
+            <td>MC-2026-00988</td>
+            <td>商户收款账户</td>
+            <td>退款率异常高</td>
+            <td>¥2,100,000</td>
+            <td>退款率监控</td>
+            <td><span class="level-tag level-medium">中</span></td>
+            <td>06-04 16:45</td>
+          </tr>
+          <tr>
+            <td>MC-2026-01112</td>
+            <td>API 接入商户</td>
+            <td>API 调用频率异常</td>
+            <td>—</td>
+            <td>接口频率限制</td>
+            <td><span class="level-tag level-low">低</span></td>
+            <td>06-04 11:30</td>
+          </tr>
+          <tr>
+            <td>MC-2026-00670</td>
+            <td>个人收款账户</td>
+            <td>同一IP多账户操作</td>
+            <td>¥580,000</td>
+            <td>关联账户识别</td>
+            <td><span class="level-tag level-low">低</span></td>
+            <td>06-03 08:05</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 大额出入金走势 -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">📈 近期大额交易走势（示例数据）</div>
+        <div class="card-subtitle">单笔 ≥ ¥500,000 的交易笔数</div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>日期</th>
+            <th>大额入金笔数</th>
+            <th>大额出金笔数</th>
+            <th>净流量</th>
+            <th>异常标注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>06-05</td><td>47</td><td>59</td><td style="color:var(--danger);">-12</td><td>⚠️ 净流出偏高</td></tr>
+          <tr><td>06-04</td><td>52</td><td>55</td><td style="color:var(--danger);">-3</td><td>—</td></tr>
+          <tr><td>06-03</td><td>61</td><td>48</td><td style="color:var(--success);">+13</td><td>—</td></tr>
+          <tr><td>06-02</td><td>44</td><td>42</td><td style="color:var(--success);">+2</td><td>—</td></tr>
+          <tr><td>06-01</td><td>58</td><td>50</td><td style="color:var(--success);">+8</td><td>—</td></tr>
+          <tr><td>05-31</td><td>49</td><td>46</td><td style="color:var(--success);">+3</td><td>—</td></tr>
+          <tr><td>05-30</td><td>55</td><td>53</td><td style="color:var(--success);">+2</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: SOP 文档区 ===== -->
+<div class="tab-content" id="tab-sop">
+  <h2 style="font-size:16px;margin-bottom:16px;">📋 风控标准操作规程 (SOP)</h2>
+
+  <div class="sop-grid">
+
+    <!-- SOP 1: 资金异常监控规则 -->
+    <div class="card sop-card open">
+      <div class="card-header" onclick="this.closest('.sop-card').classList.toggle('open')" style="cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="sop-icon">🔍</span>
+          <div>
+            <div class="card-title">资金异常监控规则</div>
+            <div class="card-subtitle">Fund Anomaly Monitoring Rules</div>
+          </div>
+        </div>
+        <span class="sop-arrow chevron">▼</span>
+      </div>
+      <div class="sop-body">
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
+          以下规则为 MC 风控系统核心监控逻辑，覆盖大额交易、异常行为、合规风险三大类。
+        </p>
+        <ul class="rule-list">
+          <li class="rule-item critical">
+            <span class="rule-bullet">🔴</span>
+            <div>
+              <strong>大额单笔出金监控</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                单笔出金 ≥ ¥1,000,000 自动触发预警，需 10 分钟内人工复核。累计24h出金 ≥ ¥5,000,000 自动冻结账户待审。
+              </div>
+            </div>
+          </li>
+          <li class="rule-item critical">
+            <span class="rule-bullet">🔴</span>
+            <div>
+              <strong>拆分交易识别</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                同一账户 1 小时内发起的多笔交易，单笔金额 < ¥500,000 但合计 ≥ ¥1,000,000，视为疑似拆分，触发二级预警。
+              </div>
+            </div>
+          </li>
+          <li class="rule-item trigger">
+            <span class="rule-bullet">🔵</span>
+            <div>
+              <strong>新商户首日交易监控</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                入网 ≤ 24h 商户，单日交易额 ≥ ¥500,000 或交易笔数 ≥ 100 笔，触发新商户异常预警。
+              </div>
+            </div>
+          </li>
+          <li class="rule-item warn">
+            <span class="rule-bullet">🟡</span>
+            <div>
+              <strong>退款率异常监控</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                商户近7天退款率 ≥ 15% 或单日退款率 ≥ 25%，触发退款异常预警。连续3天超标自动暂停商户收款权限。
+              </div>
+            </div>
+          </li>
+          <li class="rule-item trigger">
+            <span class="rule-bullet">🔵</span>
+            <div>
+              <strong>备付金充足率监控</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                备付金比例 < 20% 黄色预警，< 15% 橙色预警，< 10% 红色预警并暂停所有出金。
+              </div>
+            </div>
+          </li>
+          <li class="rule-item warn">
+            <span class="rule-bullet">🟡</span>
+            <div>
+              <strong>关联账户/IP 识别</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                同一 IP 或设备指纹关联 ≥ 3 个账户的，自动进入关联审查。重点关注跨账户资金归集行为。
+              </div>
+            </div>
+          </li>
+          <li class="rule-item trigger">
+            <span class="rule-bullet">🔵</span>
+            <div>
+              <strong>跨境交易合规筛查</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                涉及跨境结算的交易，系统自动对接收方进行制裁名单 (AML/CFT) 筛查，命中即冻结。
+              </div>
+            </div>
+          </li>
+          <li class="rule-item warn">
+            <span class="rule-bullet">🟡</span>
+            <div>
+              <strong>非营业时段大额交易</strong>
+              <div style="font-size:12px;color:var(--text-muted);">
+                每日 00:00-06:00 期间的单笔 ≥ ¥200,000 交易，触发非营业时段监控并自动延迟结算。
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SOP 2: 风险分级标准 -->
+    <div class="card sop-card open">
+      <div class="card-header" onclick="this.closest('.sop-card').classList.toggle('open')" style="cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="sop-icon">📊</span>
+          <div>
+            <div class="card-title">风险分级标准</div>
+            <div class="card-subtitle">Risk Classification Matrix</div>
+          </div>
+        </div>
+        <span class="sop-arrow chevron">▼</span>
+      </div>
+      <div class="sop-body">
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
+          所有风险事件按「影响程度 × 发生概率」分级。默认评估维度：资金安全、合规风险、系统稳定性、声誉影响。
+        </p>
+        <div class="class-grid">
+          <div class="class-card urgent">
+            <div class="class-name">🔴 紧急 · Emergency</div>
+            <div class="class-desc">可能导致重大资金损失或监管处罚</div>
+            <div class="class-items">
+              • 单笔涉案金额 ≥ ¥5,000,000<br>
+              • 备付金比例 < 10%<br>
+              • 疑似洗钱/欺诈已发生<br>
+              • 系统核心功能不可用<br>
+              • <strong>响应：5 分钟内紧急处置</strong>
+            </div>
+          </div>
+          <div class="class-card high">
+            <div class="class-name">🟠 高 · High</div>
+            <div class="class-desc">可能导致较大损失或严重运营影响</div>
+            <div class="class-items">
+              • 大额异常出金（¥1M-5M）<br>
+              • 备付金比例 10%-15%<br>
+              • 批量退款/投诉事件<br>
+              • 部分功能异常<br>
+              • <strong>响应：30 分钟内响应</strong>
+            </div>
+          </div>
+          <div class="class-card medium">
+            <div class="class-name">🟡 中 · Medium</div>
+            <div class="class-desc">可控制的风险，需持续跟踪</div>
+            <div class="class-items">
+              • 中额异常交易（¥100K-1M）<br>
+              • 新商户异常指标<br>
+              • 退款率超标但可控<br>
+              • 非关键系统告警<br>
+              • <strong>响应：2 小时内处理</strong>
+            </div>
+          </div>
+          <div class="class-card low">
+            <div class="class-name">🟢 低 · Low</div>
+            <div class="class-desc">常规监控项，例行处理</div>
+            <div class="class-items">
+              • 小额异常波动<br>
+              • 测试/非生产环境告警<br>
+              • 常规合规自查项<br>
+              • 信息性通知<br>
+              • <strong>响应：24 小时内处理</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOP 3: 预警触发条件 -->
+    <div class="card sop-card">
+      <div class="card-header" onclick="this.closest('.sop-card').classList.toggle('open')" style="cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="sop-icon">⚡</span>
+          <div>
+            <div class="card-title">预警触发条件</div>
+            <div class="card-subtitle">Alert Trigger Conditions</div>
+          </div>
+        </div>
+        <span class="sop-arrow chevron">▼</span>
+      </div>
+      <div class="sop-body">
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
+          系统自动触发预警的条件矩阵，覆盖资金、合规、技术三大维度。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>预警类型</th>
+                <th>触发条件</th>
+                <th>阈值</th>
+                <th>自动动作</th>
+                <th>通知方式</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>大额出金预警</td>
+                <td>单笔出金超过阈值</td>
+                <td>≥ ¥1,000,000</td>
+                <td>标记待审、通知风控值班</td>
+                <td>企业微信 + 邮件</td>
+              </tr>
+              <tr>
+                <td>拆分交易预警</td>
+                <td>1h内多笔合计超限</td>
+                <td>≥ ¥1,000,000</td>
+                <td>合并展示、人工确认</td>
+                <td>企业微信</td>
+              </tr>
+              <tr>
+                <td>备付金预警</td>
+                <td>备付金比例跌破阈值</td>
+                <td>< 20%</td>
+                <td>按级别限流/暂停出金</td>
+                <td>电话 + 企微 + 邮件</td>
+              </tr>
+              <tr>
+                <td>退款率预警</td>
+                <td>近7天退款率超标</td>
+                <td>≥ 15%</td>
+                <td>标记商户、暂停收款</td>
+                <td>邮件</td>
+              </tr>
+              <tr>
+                <td>新商户预警</td>
+                <td>首日交易额/笔数异常</td>
+                <td>≥ ¥500K / ≥100笔</td>
+                <td>限制日交易额度</td>
+                <td>企业微信</td>
+              </tr>
+              <tr>
+                <td>关联账户预警</td>
+                <td>同IP多账户</td>
+                <td>≥ 3个账户</td>
+                <td>关联审查、限制出金</td>
+                <td>邮件</td>
+              </tr>
+              <tr>
+                <td>AML 制裁命中</td>
+                <td>交易对手命中制裁名单</td>
+                <td>命中即触发</td>
+                <td>立即冻结、上报合规</td>
+                <td>电话 + 企微 + 邮件</td>
+              </tr>
+              <tr>
+                <td>非营业时段预警</td>
+                <td>深夜大额交易</td>
+                <td>00-06时 ≥ ¥200K</td>
+                <td>延迟结算、人工复核</td>
+                <td>企业微信</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: 风险事项清单 ===== -->
+<div class="tab-content" id="tab-risks">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+    <h2 style="font-size:16px;">⚠️ 当前在跟风险事项清单</h2>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span style="font-size:11px;color:var(--text-muted);">总计 <strong style="color:var(--text-primary);">12</strong> 项，其中紧急 <strong style="color:var(--danger);">2</strong> 项</span>
+      <input class="search-box" type="text" placeholder="搜索风险事项..." id="riskSearch" oninput="filterRisks()">
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="table-wrap">
+      <table id="riskTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>风险描述</th>
+            <th>等级</th>
+            <th>责任人</th>
+            <th>状态</th>
+            <th>发现时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-042</td>
+            <td>商户 MC-01039 疑似拆分大额出金，连续3日累计出金12.8M，资金流向多个个人账户</td>
+            <td><span class="level-tag level-emergency pulse-badge">紧急</span></td>
+            <td>张伟 · 风控一组</td>
+            <td><span class="status-badge status-active">处理中</span></td>
+            <td>06-03</td>
+            <td>06-05 18:32</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-041</td>
+            <td>备付金账户余额跌破 15% 警戒线，当前比例 12.3%，需紧急补充</td>
+            <td><span class="level-tag level-emergency pulse-badge">紧急</span></td>
+            <td>李明 · 资金组</td>
+            <td><span class="status-badge status-escalated">已上报</span></td>
+            <td>06-04</td>
+            <td>06-05 14:15</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-040</td>
+            <td>新入网商户 MC-01204 首日交易量异常激增至 3.45M，疑似批量注册套现</td>
+            <td><span class="level-tag level-high">高</span></td>
+            <td>王芳 · 风控二组</td>
+            <td><span class="status-badge status-active">处理中</span></td>
+            <td>06-05</td>
+            <td>06-05 09:22</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-039</td>
+            <td>跨境结算通道延迟上升，部分交易到达时间超过 SLA（T+1 → T+2），影响商户体验</td>
+            <td><span class="level-tag level-high">高</span></td>
+            <td>赵强 · 结算组</td>
+            <td><span class="status-badge status-active">处理中</span></td>
+            <td>06-02</td>
+            <td>06-05 10:00</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-038</td>
+            <td>某 API 商户接口调用量突增 300%，疑似被爬取或 API 密钥泄露</td>
+            <td><span class="level-tag level-medium">中</span></td>
+            <td>陈静 · 技术组</td>
+            <td><span class="status-badge status-pending">待确认</span></td>
+            <td>06-04</td>
+            <td>06-04 16:00</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-037</td>
+            <td>商户 MC-00988 近7天退款率 22%，超过 15% 阈值，涉及品类为虚拟商品</td>
+            <td><span class="level-tag level-medium">中</span></td>
+            <td>王芳 · 风控二组</td>
+            <td><span class="status-badge status-active">处理中</span></td>
+            <td>06-01</td>
+            <td>06-04 16:45</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-036</td>
+            <td>风控规则引擎 v2.3 灰度发布后偶发误拦截，影响正常商户交易成功率下降 1.2%</td>
+            <td><span class="level-tag level-medium">中</span></td>
+            <td>陈静 · 技术组</td>
+            <td><span class="status-badge status-active">处理中</span></td>
+            <td>05-30</td>
+            <td>06-03 11:20</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-035</td>
+            <td>商户 MC-00550 连续收到 5 笔消费者投诉（未授权扣款），已先行冻结</td>
+            <td><span class="level-tag level-medium">中</span></td>
+            <td>张伟 · 风控一组</td>
+            <td><span class="status-badge status-escalated">已上报</span></td>
+            <td>05-28</td>
+            <td>06-02 09:15</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-034</td>
+            <td>系统日志发现同 IP（203.0.113.x）关联 7 个账户，疑似团伙操作</td>
+            <td><span class="level-tag level-low">低</span></td>
+            <td>张伟 · 风控一组</td>
+            <td><span class="status-badge status-pending">待确认</span></td>
+            <td>06-03</td>
+            <td>06-03 08:05</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-033</td>
+            <td>月度 AML 合规自查报告中 2 项整改项逾期未关闭</td>
+            <td><span class="level-tag level-low">低</span></td>
+            <td>李明 · 合规组</td>
+            <td><span class="status-badge status-pending">待确认</span></td>
+            <td>05-25</td>
+            <td>06-01 17:00</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-032</td>
+            <td>部分商户结算账户因银行渠道维护延迟入账，影响 ≤ T+1 SLA</td>
+            <td><span class="level-tag level-low">低</span></td>
+            <td>赵强 · 结算组</td>
+            <td><span class="status-badge status-resolved">已解决</span></td>
+            <td>05-31</td>
+            <td>06-02 14:30</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted);">#RK-2026-031</td>
+            <td>监控看板数据源 API 偶发超时 2s+，影响实时性，需排查后端性能</td>
+            <td><span class="level-tag level-low">低</span></td>
+            <td>陈静 · 技术组</td>
+            <td><span class="status-badge status-resolved">已解决</span></td>
+            <td>05-29</td>
+            <td>06-01 10:00</td>
+            <td><span style="color:var(--accent);cursor:pointer;">详情 →</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 4: 上报流程 ===== -->
+<div class="tab-content" id="tab-flow">
+  <h2 style="font-size:16px;margin-bottom:16px;">🔄 风险预警上报流程</h2>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">标准上报工作流</div>
+      <div class="card-subtitle">Standard Escalation Workflow</div>
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-icon blue">🔔</div>
+        <div class="flow-title">系统触发预警</div>
+        <div class="flow-desc">规则引擎自动检测<br>生成事件工单</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon yellow">👤</div>
+        <div class="flow-title">风控值班初审</div>
+        <div class="flow-desc">值班人员 10min 内<br>确认事件真实性</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon red">📋</div>
+        <div class="flow-title">风险评估定级</div>
+        <div class="flow-desc">按分级标准评级<br>确定处置优先级</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon green">✅</div>
+        <div class="flow-title">处置 & 上报</div>
+        <div class="flow-desc">执行处置动作<br>按级别上报管理层</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon blue">📝</div>
+        <div class="flow-title">复盘 & 归档</div>
+        <div class="flow-desc">事件复盘总结<br>更新规则/流程</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">各级别上报路径</div>
+      <div class="card-subtitle">Escalation Path by Risk Level</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>风险等级</th>
+            <th>上报路径</th>
+            <th>响应时限</th>
+            <th>决策权限</th>
+            <th>通知范围</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="level-tag level-emergency">紧急</span></td>
+            <td>风控值班 → 风控总监 → CRO → CEO</td>
+            <td>5 分钟</td>
+            <td>CRO / CEO 联合决策</td>
+            <td>全员通报</td>
+          </tr>
+          <tr>
+            <td><span class="level-tag level-high">高</span></td>
+            <td>风控值班 → 风控经理 → 风控总监</td>
+            <td>30 分钟</td>
+            <td>风控总监审批</td>
+            <td>风控 + 相关部门</td>
+          </tr>
+          <tr>
+            <td><span class="level-tag level-medium">中</span></td>
+            <td>风控值班 → 风控经理</td>
+            <td>2 小时</td>
+            <td>风控经理审批</td>
+            <td>风控部门内</td>
+          </tr>
+          <tr>
+            <td><span class="level-tag level-low">低</span></td>
+            <td>风控值班自行处置</td>
+            <td>24 小时</td>
+            <td>值班自主决策</td>
+            <td>日志记录</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">上报联系人</div>
+      <div class="card-subtitle">Emergency Contacts</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>角色</th>
+            <th>姓名</th>
+            <th>联系电话</th>
+            <th>企业微信</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CRO · 首席风控官</td>
+            <td>周明远</td>
+            <td>138-xxxx-0101</td>
+            <td>@zhoumy</td>
+            <td>紧急事项唯一决策人</td>
+          </tr>
+          <tr>
+            <td>风控总监</td>
+            <td>刘建国</td>
+            <td>139-xxxx-0202</td>
+            <td>@liujg</td>
+            <td>高风险事项审批</td>
+          </tr>
+          <tr>
+            <td>风控经理</td>
+            <td>孙丽华</td>
+            <td>136-xxxx-0303</td>
+            <td>@sunlh</td>
+            <td>中风险事项审批</td>
+          </tr>
+          <tr>
+            <td>风控值班 · 一组</td>
+            <td>张伟</td>
+            <td>137-xxxx-0404</td>
+            <td>@zhangwei</td>
+            <td>7×24 值班电话</td>
+          </tr>
+          <tr>
+            <td>风控值班 · 二组</td>
+            <td>王芳</td>
+            <td>135-xxxx-0505</td>
+            <td>@wangfang</td>
+            <td>7×24 值班电话</td>
+          </tr>
+          <tr>
+            <td>技术值班</td>
+            <td>陈静</td>
+            <td>133-xxxx-0606</td>
+            <td>@chenjing</td>
+            <td>系统故障响应</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div> <!-- /main -->
+
+<script>
+// Update time
+document.getElementById('updateTime').textContent = new Date().toLocaleString('zh-CN', {
+  timeZone: 'Asia/Shanghai',
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', second: '2-digit'
+});
+
+// Tab switching
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Risk list search
+function filterRisks() {
+  const q = document.getElementById('riskSearch').value.toLowerCase();
+  document.querySelectorAll('#riskTable tbody tr').forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>
