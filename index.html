@@ -165,11 +165,29 @@
   .tv:focus::after { opacity: 0; }
   .tu {
     display: inline-block;
-    font-weight: 600;
-    color: var(--text-muted);
-    font-size: 0.9em;
+    font-weight: 700;
+    color: rgba(148,163,184,0.8);
+    background: rgba(148,163,184,0.08);
+    font-size: 0.85em;
     user-select: none;
-    padding: 0 2px;
+    padding: 2px 6px;
+    border-radius: 0 6px 6px 0;
+    border: 1.5px solid rgba(148,163,184,0.2);
+    border-left: none;
+    margin-left: -1px;
+    vertical-align: top;
+    line-height: 1.5;
+    pointer-events: none;
+  }
+  .tv {
+    border-radius: 6px 0 0 6px;
+    margin-right: 0;
+  }
+  .tv:focus {
+    border-radius: 6px 0 0 6px;
+    border-right: 2px solid var(--accent);
+    z-index: 2;
+    position: relative;
   }
 
   .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
@@ -420,17 +438,17 @@
   <div class="sop-body">
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">以下规则为交易系统核心监控逻辑，覆盖交易品种异常、客户交易行为、大额交易三大类。</p>
     <ul class="rule-list">
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种停价监控</strong><div style="font-size:12px;color:var(--text-muted);">任一交易品种连续停价 > <span class="tv" contenteditable="true" data-tk="halt-10s">10</span><span class="tu"> s</span> 自动触发预警，> <span class="tv" contenteditable="true" data-tk="halt-30s">30</span><span class="tu"> s</span> 自动暂停该品种交易并通知做市商。涵盖 EURUSD、BTCUSDC、XAUUSD、USOIL 等全部品种。</div></div></li>
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种错价监控</strong><div style="font-size:12px;color:var(--text-muted);">报价偏离市场参考价 > <span class="tv" contenteditable="true" data-tk="misprice-0.5">0.5</span><span class="tu">%</span> 自动触发预警。若错价订单已成交，立即冻结相关账户待审。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>交易品种价格延迟监控</strong><div style="font-size:12px;color:var(--text-muted);">报价延迟 ≥ <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu"> s</span> 触发预警并自动切换备用报价源；延迟 ≥ <span class="tv" contenteditable="true" data-tk="delay-1s">1</span><span class="tu"> s</span> 且 < <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu"> s</span> 触发黄色提醒。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>大额交易滑点监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易滑点 > <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu">%</span> 或滑点绝对值 > <span class="tv" contenteditable="true" data-tk="slip-500">500</span><span class="tu"> USDC</span>，触发滑点异常预警，标记待人工复核。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户异常胜率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户近 7 天交易胜率 > <span class="tv" contenteditable="true" data-tk="winrate-80">80</span><span class="tu">%</span>，触发异常胜率预警，自动限制该客户日内开仓次数。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>客户异常盈利率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户累计盈利金额 > 净入金（Deposit - Withdrawal）的 <span class="tv" contenteditable="true" data-tk="profit-50">50</span><span class="tu">%</span>，触发异常盈利率预警。> <span class="tv" contenteditable="true" data-tk="profit-100">100</span><span class="tu">%</span> 自动限制出金。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>大额单笔交易监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易额 ≥ <span class="tv" contenteditable="true" data-tk="large-100k">100,000</span><span class="tu"> USDC</span> 自动触发预警，需 10 分钟内人工复核。累计 24h 交易额 ≥ <span class="tv" contenteditable="true" data-tk="large-500k">500,000</span><span class="tu"> USDC</span> 自动限制开仓。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>非交易时段大额交易</strong><div style="font-size:12px;color:var(--text-muted);">每日休市期间的单笔 ≥ <span class="tv" contenteditable="true" data-tk="after-10k">10,000</span><span class="tu"> USDC</span> 交易，触发非交易时段监控并自动延迟到开盘执行。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>出入金异常监控</strong><div style="font-size:12px;color:var(--text-muted);">单一账户 24h 内出金 > <span class="tv" contenteditable="true" data-tk="wdraw-100k">100,000</span><span class="tu"> USDC</span> 且无对应交易记录，或短时间内大量小额出金（疑似拆分），触发预警。自动延迟出金并人工复核。（仅异常预警，流水台账归财务）</div></div></li>
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>净头寸 / 敞口监控</strong><div style="font-size:12px;color:var(--text-muted);">平台单一品种净多/净空头寸 > 做市商承诺流动性的 <span class="tv" contenteditable="true" data-tk="exposure-70">70</span><span class="tu">%</span>，触发敞口预警。> <span class="tv" contenteditable="true" data-tk="exposure-100">100</span><span class="tu">%</span> 自动暂停该品种同向开仓并通知做市商补充流动性。按 EURUSD、BTCUSDC、XAUUSD、USOIL 等品种逐项监控。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户集中度预警</strong><div style="font-size:12px;color:var(--text-muted);">单一客户总敞口 > 平台总敞口的 <span class="tv" contenteditable="true" data-tk="concen-20">20</span><span class="tu">%</span>，或单品种持仓 > 该品种总持仓的 <span class="tv" contenteditable="true" data-tk="concen-30">30</span><span class="tu">%</span>，触发集中度预警。自动限制该客户继续加仓并通知风控评估。</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种停价监控</strong><div style="font-size:12px;color:var(--text-muted);">任一交易品种连续停价 > <span class="tv" contenteditable="true" data-tk="halt-10s">10</span><span class="tu" contenteditable="false"> s</span> 自动触发预警，> <span class="tv" contenteditable="true" data-tk="halt-30s">30</span><span class="tu" contenteditable="false"> s</span> 自动暂停该品种交易并通知做市商。涵盖 EURUSD、BTCUSDC、XAUUSD、USOIL 等全部品种。</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种错价监控</strong><div style="font-size:12px;color:var(--text-muted);">报价偏离市场参考价 > <span class="tv" contenteditable="true" data-tk="misprice-0.5">0.5</span><span class="tu" contenteditable="false">%</span> 自动触发预警。若错价订单已成交，立即冻结相关账户待审。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>交易品种价格延迟监控</strong><div style="font-size:12px;color:var(--text-muted);">报价延迟 ≥ <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu" contenteditable="false"> s</span> 触发预警并自动切换备用报价源；延迟 ≥ <span class="tv" contenteditable="true" data-tk="delay-1s">1</span><span class="tu" contenteditable="false"> s</span> 且 < <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu" contenteditable="false"> s</span> 触发黄色提醒。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>大额交易滑点监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易滑点 > <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu" contenteditable="false">%</span> 或滑点绝对值 > <span class="tv" contenteditable="true" data-tk="slip-500">500</span><span class="tu" contenteditable="false"> USDC</span>，触发滑点异常预警，标记待人工复核。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户异常胜率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户近 7 天交易胜率 > <span class="tv" contenteditable="true" data-tk="winrate-80">80</span><span class="tu" contenteditable="false">%</span>，触发异常胜率预警，自动限制该客户日内开仓次数。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>客户异常盈利率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户累计盈利金额 > 净入金（Deposit - Withdrawal）的 <span class="tv" contenteditable="true" data-tk="profit-50">50</span><span class="tu" contenteditable="false">%</span>，触发异常盈利率预警。> <span class="tv" contenteditable="true" data-tk="profit-100">100</span><span class="tu" contenteditable="false">%</span> 自动限制出金。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>大额单笔交易监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易额 ≥ <span class="tv" contenteditable="true" data-tk="large-100k">100,000</span><span class="tu" contenteditable="false"> USDC</span> 自动触发预警，需 10 分钟内人工复核。累计 24h 交易额 ≥ <span class="tv" contenteditable="true" data-tk="large-500k">500,000</span><span class="tu" contenteditable="false"> USDC</span> 自动限制开仓。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>非交易时段大额交易</strong><div style="font-size:12px;color:var(--text-muted);">每日休市期间的单笔 ≥ <span class="tv" contenteditable="true" data-tk="after-10k">10,000</span><span class="tu" contenteditable="false"> USDC</span> 交易，触发非交易时段监控并自动延迟到开盘执行。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>出入金异常监控</strong><div style="font-size:12px;color:var(--text-muted);">单一账户 24h 内出金 > <span class="tv" contenteditable="true" data-tk="wdraw-100k">100,000</span><span class="tu" contenteditable="false"> USDC</span> 且无对应交易记录，或短时间内大量小额出金（疑似拆分），触发预警。自动延迟出金并人工复核。（仅异常预警，流水台账归财务）</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>净头寸 / 敞口监控</strong><div style="font-size:12px;color:var(--text-muted);">平台单一品种净多/净空头寸 > 做市商承诺流动性的 <span class="tv" contenteditable="true" data-tk="exposure-70">70</span><span class="tu" contenteditable="false">%</span>，触发敞口预警。> <span class="tv" contenteditable="true" data-tk="exposure-100">100</span><span class="tu" contenteditable="false">%</span> 自动暂停该品种同向开仓并通知做市商补充流动性。按 EURUSD、BTCUSDC、XAUUSD、USOIL 等品种逐项监控。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户集中度预警</strong><div style="font-size:12px;color:var(--text-muted);">单一客户总敞口 > 平台总敞口的 <span class="tv" contenteditable="true" data-tk="concen-20">20</span><span class="tu" contenteditable="false">%</span>，或单品种持仓 > 该品种总持仓的 <span class="tv" contenteditable="true" data-tk="concen-30">30</span><span class="tu" contenteditable="false">%</span>，触发集中度预警。自动限制该客户继续加仓并通知风控评估。</div></div></li>
     </ul>
   </div>
 </div>
@@ -442,9 +460,9 @@
   <div class="sop-body">
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">所有风险事件按「影响程度 × 发生概率」分级。评估维度：交易安全、客户资金安全、系统稳定性、市场影响。</p>
     <div class="class-grid">
-      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大客户资金损失或系统性风险</div><div class="class-items">• 交易品种停价 > <span class="tv" contenteditable="true" data-tk="halt-30s">30</span><span class="tu"> s</span><br>• 错价订单已成交<br>• 净头寸 > 流动性 <span class="tv" contenteditable="true" data-tk="exposure-100">100</span><span class="tu">%</span><br>• <strong>响应：5 分钟</strong></div></div>
-      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重影响交易</div><div class="class-items">• 停价 <span class="tv" contenteditable="true" data-tk="halt-10s">10</span><span class="tu"> s</span>-<span class="tv" contenteditable="true" data-tk="halt-30s">30</span><span class="tu"> s</span> / 延迟 > <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu"> s</span><br>• 敞口 > 流动性 <span class="tv" contenteditable="true" data-tk="exposure-70">70</span><span class="tu">%</span><br>• 单客户集中度 > <span class="tv" contenteditable="true" data-tk="concen-30">30</span><span class="tu">%</span><br>• <strong>响应：30 分钟</strong></div></div>
-      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 报价延迟 <span class="tv" contenteditable="true" data-tk="delay-1s">1</span><span class="tu"> s</span>-<span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu"> s</span> / 滑点 <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu">%</span><br>• 出入金异常预警<br>• 客户盈利率 > 净入金 <span class="tv" contenteditable="true" data-tk="profit-50">50</span><span class="tu">%</span><br>• <strong>响应：2 小时</strong></div></div>
+      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大客户资金损失或系统性风险</div><div class="class-items">• 交易品种停价 > <span class="tv" contenteditable="true" data-tk="halt-30s">30</span><span class="tu" contenteditable="false"> s</span><br>• 错价订单已成交<br>• 净头寸 > 流动性 <span class="tv" contenteditable="true" data-tk="exposure-100">100</span><span class="tu" contenteditable="false">%</span><br>• <strong>响应：5 分钟</strong></div></div>
+      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重影响交易</div><div class="class-items">• 停价 <span class="tv" contenteditable="true" data-tk="halt-10s">10</span><span class="tu" contenteditable="false"> s</span>-<span class="tv" contenteditable="true" data-tk="halt-30s">30</span><span class="tu" contenteditable="false"> s</span> / 延迟 > <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu" contenteditable="false"> s</span><br>• 敞口 > 流动性 <span class="tv" contenteditable="true" data-tk="exposure-70">70</span><span class="tu" contenteditable="false">%</span><br>• 单客户集中度 > <span class="tv" contenteditable="true" data-tk="concen-30">30</span><span class="tu" contenteditable="false">%</span><br>• <strong>响应：30 分钟</strong></div></div>
+      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 报价延迟 <span class="tv" contenteditable="true" data-tk="delay-1s">1</span><span class="tu" contenteditable="false"> s</span>-<span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu" contenteditable="false"> s</span> / 滑点 <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu" contenteditable="false">%</span><br>• 出入金异常预警<br>• 客户盈利率 > 净入金 <span class="tv" contenteditable="true" data-tk="profit-50">50</span><span class="tu" contenteditable="false">%</span><br>• <strong>响应：2 小时</strong></div></div>
       <div class="class-card low"><div class="class-name">🟢 低 · Low</div><div class="class-desc">常规监控项，例行处理</div><div class="class-items">• 偶发延迟 < 1s<br>• 小额滑点 (< 1%)<br>• 常规系统告警<br>• <strong>响应：24 小时</strong></div></div>
     </div>
   </div>
@@ -458,17 +476,17 @@
     <div class="table-wrap"><table>
       <thead><tr><th>预警类型</th><th>触发条件</th><th>阈值</th><th>自动动作</th><th>通知方式</th></tr></thead>
       <tbody>
-        <tr><td>品种停价预警</td><td>任一品种连续停价超时</td><td>> <span class="tv" contenteditable="true" data-tk="halt-10s">10</span><span class="tu"> s</span></td><td>暂停该品种交易、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>错价预警</td><td>报价偏离市场参考价</td><td>> <span class="tv" contenteditable="true" data-tk="misprice-0.5">0.5</span><span class="tu">%</span></td><td>暂停品种、撤销异常订单</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>价格延迟预警</td><td>报价延迟超过阈值</td><td>≥ <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu"> s</span></td><td>切换备用报价源</td><td>企业微信</td></tr>
-        <tr><td>滑点预警</td><td>单笔交易滑点超限</td><td>> <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu">%</span> 或 > <span class="tv" contenteditable="true" data-tk="slip-500">500</span><span class="tu"> USDC</span></td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
-        <tr><td>异常胜率预警</td><td>客户近7天胜率异常高</td><td>> <span class="tv" contenteditable="true" data-tk="winrate-80">80</span><span class="tu">%</span></td><td>限制日内开仓次数</td><td>企业微信</td></tr>
-        <tr><td>异常盈利率预警</td><td>盈利超过净入金比例</td><td>> <span class="tv" contenteditable="true" data-tk="profit-50">50</span><span class="tu">%</span></td><td>限制出金、标记账户</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>大额交易预警</td><td>单笔交易额超过阈值</td><td>≥ <span class="tv" contenteditable="true" data-tk="large-100k">100,000</span><span class="tu"> USDC</span></td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
-        <tr><td>非交易时段预警</td><td>休市期间大额交易</td><td>休市期间 ≥ <span class="tv" contenteditable="true" data-tk="after-10k">10,000</span><span class="tu"> USDC</span></td><td>延迟到开盘执行</td><td>企业微信</td></tr>
-        <tr><td>出入金异常预警</td><td>24h 出金超限或无交易匹配</td><td>出金 > <span class="tv" contenteditable="true" data-tk="wdraw-100k">100,000</span><span class="tu"> USDC</span> 或拆分模式</td><td>延迟出金、人工复核</td><td>企业微信 + 邮件</td></tr>
-        <tr><td>净头寸 / 敞口预警</td><td>单品种净头寸超流动性阈值</td><td>> 做市商流动性的 <span class="tv" contenteditable="true" data-tk="exposure-70">70</span><span class="tu">%</span></td><td>暂停同向开仓、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>客户集中度预警</td><td>单客户敞口占比过高</td><td>> 平台 <span class="tv" contenteditable="true" data-tk="concen-20">20</span><span class="tu">%</span> 或单品种 <span class="tv" contenteditable="true" data-tk="concen-30">30</span><span class="tu">%</span></td><td>限制加仓、通知风控评估</td><td>企业微信</td></tr>
+        <tr><td>品种停价预警</td><td>任一品种连续停价超时</td><td>> <span class="tv" contenteditable="true" data-tk="halt-10s">10</span><span class="tu" contenteditable="false"> s</span></td><td>暂停该品种交易、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>错价预警</td><td>报价偏离市场参考价</td><td>> <span class="tv" contenteditable="true" data-tk="misprice-0.5">0.5</span><span class="tu" contenteditable="false">%</span></td><td>暂停品种、撤销异常订单</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>价格延迟预警</td><td>报价延迟超过阈值</td><td>≥ <span class="tv" contenteditable="true" data-tk="delay-3s">3</span><span class="tu" contenteditable="false"> s</span></td><td>切换备用报价源</td><td>企业微信</td></tr>
+        <tr><td>滑点预警</td><td>单笔交易滑点超限</td><td>> <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu" contenteditable="false">%</span> 或 > <span class="tv" contenteditable="true" data-tk="slip-500">500</span><span class="tu" contenteditable="false"> USDC</span></td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>异常胜率预警</td><td>客户近7天胜率异常高</td><td>> <span class="tv" contenteditable="true" data-tk="winrate-80">80</span><span class="tu" contenteditable="false">%</span></td><td>限制日内开仓次数</td><td>企业微信</td></tr>
+        <tr><td>异常盈利率预警</td><td>盈利超过净入金比例</td><td>> <span class="tv" contenteditable="true" data-tk="profit-50">50</span><span class="tu" contenteditable="false">%</span></td><td>限制出金、标记账户</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>大额交易预警</td><td>单笔交易额超过阈值</td><td>≥ <span class="tv" contenteditable="true" data-tk="large-100k">100,000</span><span class="tu" contenteditable="false"> USDC</span></td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>非交易时段预警</td><td>休市期间大额交易</td><td>休市期间 ≥ <span class="tv" contenteditable="true" data-tk="after-10k">10,000</span><span class="tu" contenteditable="false"> USDC</span></td><td>延迟到开盘执行</td><td>企业微信</td></tr>
+        <tr><td>出入金异常预警</td><td>24h 出金超限或无交易匹配</td><td>出金 > <span class="tv" contenteditable="true" data-tk="wdraw-100k">100,000</span><span class="tu" contenteditable="false"> USDC</span> 或拆分模式</td><td>延迟出金、人工复核</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>净头寸 / 敞口预警</td><td>单品种净头寸超流动性阈值</td><td>> 做市商流动性的 <span class="tv" contenteditable="true" data-tk="exposure-70">70</span><span class="tu" contenteditable="false">%</span></td><td>暂停同向开仓、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>客户集中度预警</td><td>单客户敞口占比过高</td><td>> 平台 <span class="tv" contenteditable="true" data-tk="concen-20">20</span><span class="tu" contenteditable="false">%</span> 或单品种 <span class="tv" contenteditable="true" data-tk="concen-30">30</span><span class="tu" contenteditable="false">%</span></td><td>限制加仓、通知风控评估</td><td>企业微信</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -1073,13 +1091,13 @@ function generateMetricDetail(drillType) {
     body.innerHTML = halt_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无品种异常事件 ✅</td></tr>'
       : halt_data.map(r => `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`).join('');
   } else if (drillType === 'slippage') {
-    title.innerHTML = '📉 大额滑点明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">滑点 > <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu">%</span> 或 > <span class="tv" contenteditable="true" data-tk="slip-500">500</span><span class="tu"> USDC</span></span>';
+    title.innerHTML = '📉 大额滑点明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">滑点 > <span class="tv" contenteditable="true" data-tk="slip-2pct">2</span><span class="tu" contenteditable="false">%</span> 或 > <span class="tv" contenteditable="true" data-tk="slip-500">500</span><span class="tu" contenteditable="false"> USDC</span></span>';
     head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>交易品种</th><th>滑点详情</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
     const slip_data = SAMPLE_LARGE_WITHDRAWALS.filter(r => r[4].includes('滑点'));
     body.innerHTML = slip_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无滑点异常事件 ✅</td></tr>'
       : slip_data.map(r => `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`).join('');
   } else if (drillType === 'winrate') {
-    title.innerHTML = '🎯 异常胜率/盈利率客户 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">胜率 > <span class="tv" contenteditable="true" data-tk="winrate-80">80</span><span class="tu">%</span> 或盈利率异常</span>';
+    title.innerHTML = '🎯 异常胜率/盈利率客户 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">胜率 > <span class="tv" contenteditable="true" data-tk="winrate-80">80</span><span class="tu" contenteditable="false">%</span> 或盈利率异常</span>';
     head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>交易品种</th><th>异常描述</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
     const wr_data = SAMPLE_LARGE_WITHDRAWALS.filter(r => r[4].includes('胜率') || r[4].includes('盈利率'));
     body.innerHTML = wr_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无异常客户 ✅</td></tr>'
@@ -1255,7 +1273,7 @@ function openThresholdModal() {
   tbody.innerHTML = Object.keys(THRESHOLD_LABELS).map(k => `
     <tr>
       <td>${THRESHOLD_LABELS[k]}</td>
-      <td><span class="tv" contenteditable="true" data-tk="${k}">${THRESHOLD_DEFAULTS[k]}</span><span class="tu"> </span></td>
+      <td><span class="tv" contenteditable="true" data-tk="${k}">${THRESHOLD_DEFAULTS[k]}</span><span class="tu" contenteditable="false"> </span></td>
       <td><button class="btn btn-sm" onclick="resetOneThreshold('${k}')">↩ 默认</button></td>
     </tr>
   `).join('');
