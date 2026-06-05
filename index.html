@@ -359,7 +359,7 @@
         <tbody id="anomalyTable">
           <tr><td>MC-2026-01039</td><td>商户收款账户</td><td>短时间内大额分散出金</td><td style="color:var(--danger);">¥12,800,000</td><td>大额拆分规则</td><td><span class="level-tag level-emergency">紧急</span></td><td>06-05 18:32</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-01039拆分出金','emergency','Rockey')">+ 建风险项</button></td></tr>
           <tr><td>MC-2026-00821</td><td>备付金账户</td><td>备付金比例跌破阈值</td><td>¥5,200,000</td><td>备付金充足率</td><td><span class="level-tag level-high">高</span></td><td>06-05 14:15</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('备付金比例低于15%','high','Mark')">+ 建风险项</button></td></tr>
-          <tr><td>MC-2026-01204</td><td>新入网商户</td><td>首日交易量异常激增</td><td>¥3,450,000</td><td>新商户监控</td><td><span class="level-tag level-high">高</span></td><td>06-05 09:22</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('新商户MC-01204首日交易激增','high','Elaine')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-01204</td><td>新注册客户</td><td>首日交易量异常激增</td><td>¥3,450,000</td><td>新客户监控</td><td><span class="level-tag level-high">高</span></td><td>06-05 09:22</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('新客户MC-01204首日交易激增','high','Elaine')">+ 建风险项</button></td></tr>
           <tr><td>MC-2026-00755</td><td>跨境结算账户</td><td>频繁小额测试交易</td><td>¥86,000</td><td>刷单/测试识别</td><td><span class="level-tag level-medium">中</span></td><td>06-04 22:10</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-00755频繁测试交易','medium','Rockey')">+ 建风险项</button></td></tr>
         </tbody>
       </table>
@@ -381,7 +381,7 @@
     <ul class="rule-list">
       <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>大额单笔出金监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔出金 ≥ ¥1,000,000 自动触发预警，需 10 分钟内人工复核。累计24h出金 ≥ ¥5,000,000 自动冻结账户待审。</div></div></li>
       <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>拆分交易识别</strong><div style="font-size:12px;color:var(--text-muted);">同一账户 1 小时内发起的多笔交易，单笔金额 < ¥500,000 但合计 ≥ ¥1,000,000，视为疑似拆分，触发二级预警。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>新商户首日交易监控</strong><div style="font-size:12px;color:var(--text-muted);">入网 ≤ 24h 商户，单日交易额 ≥ ¥500,000 或交易笔数 ≥ 100 笔，触发新商户异常预警。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>新客户首日交易监控</strong><div style="font-size:12px;color:var(--text-muted);">入金 ≤ 24h 客户，单日交易额 ≥ 100,000 USDC 或交易笔数 ≥ 5 笔，触发新客户异常预警。</div></div></li>
       <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>退款率异常监控</strong><div style="font-size:12px;color:var(--text-muted);">商户近7天退款率 ≥ 15% 或单日退款率 ≥ 25%，触发退款异常预警。连续3天超标自动暂停商户收款权限。</div></div></li>
       <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>备付金充足率监控</strong><div style="font-size:12px;color:var(--text-muted);">备付金比例 < 20% 黄色预警，< 15% 橙色预警，< 10% 红色预警并暂停所有出金。</div></div></li>
       <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>关联账户/IP 识别</strong><div style="font-size:12px;color:var(--text-muted);">同一 IP 或设备指纹关联 ≥ 3 个账户的，自动进入关联审查。重点关注跨账户资金归集行为。</div></div></li>
@@ -400,7 +400,7 @@
     <div class="class-grid">
       <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大资金损失或监管处罚</div><div class="class-items">• 单笔涉案金额 ≥ ¥5,000,000<br>• 备付金比例 < 10%<br>• 疑似洗钱/欺诈已发生<br>• <strong>响应：5 分钟</strong></div></div>
       <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重运营影响</div><div class="class-items">• 大额异常出金（¥1M-5M）<br>• 备付金比例 10%-15%<br>• 批量退款/投诉事件<br>• <strong>响应：30 分钟</strong></div></div>
-      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 中额异常交易（¥100K-1M）<br>• 新商户异常指标<br>• 退款率超标但可控<br>• <strong>响应：2 小时</strong></div></div>
+      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 中额异常交易（¥100K-1M）<br>• 新客户异常指标<br>• 退款率超标但可控<br>• <strong>响应：2 小时</strong></div></div>
       <div class="class-card low"><div class="class-name">🟢 低 · Low</div><div class="class-desc">常规监控项，例行处理</div><div class="class-items">• 小额异常波动<br>• 测试/非生产环境告警<br>• 常规合规自查项<br>• <strong>响应：24 小时</strong></div></div>
     </div>
   </div>
@@ -418,7 +418,7 @@
         <tr><td>拆分交易预警</td><td>1h内多笔合计超限</td><td>≥ ¥1,000,000</td><td>合并展示、人工确认</td><td>企业微信</td></tr>
         <tr><td>备付金预警</td><td>备付金比例跌破阈值</td><td>< 20%</td><td>按级别限流/暂停出金</td><td>电话 + 企微 + 邮件</td></tr>
         <tr><td>退款率预警</td><td>近7天退款率超标</td><td>≥ 15%</td><td>标记商户、暂停收款</td><td>邮件</td></tr>
-        <tr><td>新商户预警</td><td>首日交易额/笔数异常</td><td>≥ ¥500K / ≥100笔</td><td>限制日交易额度</td><td>企业微信</td></tr>
+        <tr><td>新客户预警</td><td>首日交易额/笔数异常</td><td>≥ 100,000 USDC / ≥5笔</td><td>限制日交易额度</td><td>企业微信</td></tr>
         <tr><td>关联账户预警</td><td>同IP多账户</td><td>≥ 3个账户</td><td>关联审查、限制出金</td><td>邮件</td></tr>
         <tr><td>AML 制裁命中</td><td>交易对手命中制裁名单</td><td>命中即触发</td><td>立即冻结、上报合规</td><td>电话 + 企微 + 邮件</td></tr>
         <tr><td>非营业时段预警</td><td>深夜大额交易</td><td>00-06时 ≥ ¥200K</td><td>延迟结算、人工复核</td><td>企业微信</td></tr>
@@ -972,7 +972,7 @@ const SAMPLE_LARGE_WITHDRAWALS = [
   ['W-2026-0605-03','MC-01039','商户收款','¥2,800,000','大额拆分规则','06-05 18:28','emergency'],
   ['W-2026-0605-04','MC-01039','商户收款','¥4,000,000','大额拆分规则','06-05 18:25','emergency'],
   ['W-2026-0605-05','MC-00821','备付金','¥5,200,000','备付金充足率','06-05 14:15','high'],
-  ['W-2026-0605-06','MC-01204','新入网商户','¥3,450,000','新商户监控','06-05 09:22','high'],
+  ['W-2026-0605-06','MC-01204','新注册客户','¥3,450,000','新客户监控','06-05 09:22','high'],
   ['W-2026-0605-07','MC-00988','商户收款','¥2,100,000','退款率监控','06-04 16:45','medium'],
   ['W-2026-0605-08','MC-00550','商户收款','¥1,850,000','投诉关联','06-04 14:20','medium'],
   ['W-2026-0605-09','MC-01039','商户收款','¥1,600,000','大额拆分规则','06-04 11:15','emergency'],
@@ -984,7 +984,7 @@ const SAMPLE_LARGE_WITHDRAWALS = [
 const SAMPLE_ALL_ANOMALY = [
   ['MC-2026-01039','商户收款账户','短时间内大额分散出金','¥12,800,000','大额拆分规则','emergency','06-05 18:32'],
   ['MC-2026-00821','备付金账户','备付金比例跌破阈值','¥5,200,000','备付金充足率','high','06-05 14:15'],
-  ['MC-2026-01204','新入网商户','首日交易量异常激增','¥3,450,000','新商户监控','high','06-05 09:22'],
+  ['MC-2026-01204','新注册客户','首日交易量异常激增','¥3,450,000','新客户监控','high','06-05 09:22'],
   ['MC-2026-00755','跨境结算账户','频繁小额测试交易','¥86,000','刷单/测试识别','medium','06-04 22:10'],
   ['MC-2026-00988','商户收款账户','退款率异常高','¥2,100,000','退款率监控','medium','06-04 16:45'],
   ['MC-2026-01112','API接入商户','API调用频率异常','—','接口频率限制','low','06-04 11:30'],
