@@ -309,20 +309,20 @@
       <div class="metric-value" style="color:var(--danger);" id="countEmergency">--</div>
       <div class="metric-change up" style="font-size:11px;color:var(--text-muted);">点击查看详情 →</div>
     </div>
-    <div class="metric-card warning" data-drill="large-withdrawal">
-      <div class="metric-label">🔺 大额异常出金笔数</div>
-      <div class="metric-value" style="color:var(--warning);">12</div>
-      <div class="metric-change up">↑ 3 笔 vs 昨日</div>
+    <div class="metric-card warning" data-drill="instrument-halt">
+      <div class="metric-label">⏸️ 品种停价次数</div>
+      <div class="metric-value" style="color:var(--warning);">3</div>
+      <div class="metric-change up">↑ BTCUSDC 停价 18s</div>
     </div>
-    <div class="metric-card" data-drill="netflow">
-      <div class="metric-label">💰 当日总出入金差额</div>
-      <div class="metric-value">-2,340,500</div>
-      <div class="metric-change up">↑ 净流出增加 15%</div>
+    <div class="metric-card" data-drill="slippage">
+      <div class="metric-label">📉 大额滑点笔数</div>
+      <div class="metric-value">5</div>
+      <div class="metric-change up">↑ 2 笔 vs 昨日</div>
     </div>
-    <div class="metric-card" data-drill="anomaly-accounts">
-      <div class="metric-label">👤 异常账户数</div>
-      <div class="metric-value" id="countAnomalyAccounts">7</div>
-      <div class="metric-change up">↑ 2 个新增异常</div>
+    <div class="metric-card" data-drill="winrate">
+      <div class="metric-label">🎯 异常胜率客户数</div>
+      <div class="metric-value" id="countAnomalyAccounts">2</div>
+      <div class="metric-change up">↑ 1 个新增</div>
     </div>
     <div class="metric-card" data-drill="risk-high">
       <div class="metric-label">🟠 高风险项</div>
@@ -347,20 +347,20 @@
     </div>
   </div>
 
-  <!-- 异常账户明细 -->
+  <!-- 交易异常监控明细 -->
   <div class="card">
     <div class="card-header">
-      <div><div class="card-title">🚨 异常账户监控明细</div><div class="card-subtitle">近7天触发异常规则的账户</div></div>
+      <div><div class="card-title">🚨 交易异常监控明细</div><div class="card-subtitle">近7天触发异常规则的交易/账户</div></div>
       <span class="level-tag level-emergency pulse-badge">实时监控中</span>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>账户ID</th><th>账户类型</th><th>异常类型</th><th>涉及金额</th><th>触发规则</th><th>风险等级</th><th>发现时间</th><th>操作</th></tr></thead>
+        <thead><tr><th>账户ID</th><th>交易品种</th><th>异常类型</th><th>涉及金额</th><th>触发规则</th><th>风险等级</th><th>发现时间</th><th>操作</th></tr></thead>
         <tbody id="anomalyTable">
-          <tr><td>MC-2026-01039</td><td>商户收款账户</td><td>短时间内大额分散出金</td><td style="color:var(--danger);">12,800,000 USDC</td><td>大额拆分规则</td><td><span class="level-tag level-emergency">紧急</span></td><td>06-05 18:32</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-01039拆分出金','emergency','Rockey')">+ 建风险项</button></td></tr>
-          <tr><td>MC-2026-00821</td><td>备付金账户</td><td>备付金比例跌破阈值</td><td>5,200,000 USDC</td><td>备付金充足率</td><td><span class="level-tag level-high">高</span></td><td>06-05 14:15</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('备付金比例低于15%','high','Mark')">+ 建风险项</button></td></tr>
-          <tr><td>MC-2026-01204</td><td>新注册客户</td><td>首日交易量异常激增</td><td>3,450,000 USDC</td><td>新客户监控</td><td><span class="level-tag level-high">高</span></td><td>06-05 09:22</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('新客户MC-01204首日交易激增','high','Elaine')">+ 建风险项</button></td></tr>
-          <tr><td>MC-2026-00755</td><td>跨境结算账户</td><td>频繁小额测试交易</td><td>86,000 USDC</td><td>刷单/测试识别</td><td><span class="level-tag level-medium">中</span></td><td>06-04 22:10</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-00755频繁测试交易','medium','Rockey')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-01039</td><td>BTCUSDC</td><td>客户胜率异常高 87%</td><td style="color:var(--danger);">盈利 128,000 USDC</td><td>异常胜率监控</td><td><span class="level-tag level-emergency">紧急</span></td><td>06-05 18:32</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('MC-01039胜率87%异常','emergency','Rockey')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-00821</td><td>XAUUSD</td><td>交易品种停价 18s</td><td>—</td><td>品种停价监控</td><td><span class="level-tag level-high">高</span></td><td>06-05 14:15</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('XAUUSD停价18s','high','Mark')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-01204</td><td>USOIL</td><td>报价延迟 4.2s</td><td>—</td><td>价格延迟监控</td><td><span class="level-tag level-high">高</span></td><td>06-05 09:22</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('USOIL报价延迟4.2s','high','Elaine')">+ 建风险项</button></td></tr>
+          <tr><td>MC-2026-00755</td><td>EURUSD</td><td>大额交易滑点 3.1%</td><td>滑点损失 1,860 USDC</td><td>滑点监控</td><td><span class="level-tag level-medium">中</span></td><td>06-04 22:10</td><td><button class="btn btn-sm btn-primary" onclick="quickCreateRisk('EURUSD滑点3.1%','medium','Rockey')">+ 建风险项</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -369,24 +369,24 @@
 
 <!-- ===== TAB 2: SOP ===== -->
 <div class="tab-content" id="tab-sop">
-<h2 style="font-size:16px;margin-bottom:16px;">📋 风控标准操作规程 (SOP)</h2>
+<h2 style="font-size:16px;margin-bottom:16px;">📋 CFD 交易风控标准操作规程 (SOP)</h2>
 <div class="sop-grid">
 <div class="card sop-card open">
   <div class="card-header" onclick="this.closest('.sop-card').classList.toggle('open')" style="cursor:pointer;">
-    <div style="display:flex;align-items:center;gap:10px;"><span class="sop-icon">🔍</span><div><div class="card-title">资金异常监控规则</div><div class="card-subtitle">Fund Anomaly Monitoring Rules</div></div></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span class="sop-icon">🔍</span><div><div class="card-title">交易异常监控规则</div><div class="card-subtitle">Trading Anomaly Monitoring Rules · CFD</div></div></div>
     <span class="sop-arrow chevron">▼</span>
   </div>
   <div class="sop-body">
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">以下规则为 MC 风控系统核心监控逻辑，覆盖大额交易、异常行为、合规风险三大类。</p>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">以下规则为 MC Markets CFD 交易系统核心监控逻辑，覆盖交易品种异常、客户交易行为、大额交易三大类。</p>
     <ul class="rule-list">
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>大额单笔出金监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔出金 ≥ 1,000,000 USDC 自动触发预警，需 10 分钟内人工复核。累计24h出金 ≥ 5,000,000 USDC 自动冻结账户待审。</div></div></li>
-      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>拆分交易识别</strong><div style="font-size:12px;color:var(--text-muted);">同一账户 1 小时内发起的多笔交易，单笔金额 < 500,000 USDC 但合计 ≥ 1,000,000 USDC，视为疑似拆分，触发二级预警。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>新客户首日交易监控</strong><div style="font-size:12px;color:var(--text-muted);">入金 ≤ 24h 客户，单日交易额 ≥ 100,000 USDC 或交易笔数 ≥ 5 笔，触发新客户异常预警。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>退款率异常监控</strong><div style="font-size:12px;color:var(--text-muted);">商户近7天退款率 ≥ 15% 或单日退款率 ≥ 25%，触发退款异常预警。连续3天超标自动暂停商户收款权限。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>备付金充足率监控</strong><div style="font-size:12px;color:var(--text-muted);">备付金比例 < 20% 黄色预警，< 15% 橙色预警，< 10% 红色预警并暂停所有出金。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>关联账户/IP 识别</strong><div style="font-size:12px;color:var(--text-muted);">同一 IP 或设备指纹关联 ≥ 3 个账户的，自动进入关联审查。重点关注跨账户资金归集行为。</div></div></li>
-      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>跨境交易合规筛查</strong><div style="font-size:12px;color:var(--text-muted);">涉及跨境结算的交易，系统自动对接收方进行制裁名单 (AML/CFT) 筛查，命中即冻结。</div></div></li>
-      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>非营业时段大额交易</strong><div style="font-size:12px;color:var(--text-muted);">每日 00:00-06:00 期间的单笔 ≥ 200,000 USDC 交易，触发非营业时段监控并自动延迟结算。</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种停价监控</strong><div style="font-size:12px;color:var(--text-muted);">任一交易品种连续停价 > 10s 自动触发预警，> 30s 自动暂停该品种交易并通知做市商。涵盖 EURUSD、BTCUSDC、XAUUSD、USOIL 等全部品种。</div></div></li>
+      <li class="rule-item critical"><span class="rule-bullet">🔴</span><div><strong>交易品种错价监控</strong><div style="font-size:12px;color:var(--text-muted);">报价偏离市场参考价 > 0.5% 自动触发预警。若错价订单已成交，立即冻结相关账户待审。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>交易品种价格延迟监控</strong><div style="font-size:12px;color:var(--text-muted);">报价延迟 ≥ 3s 触发预警并自动切换备用报价源；延迟 ≥ 1s 且 < 3s 触发黄色提醒。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>大额交易滑点监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易滑点 > 2% 或滑点绝对值 > 500 USDC，触发滑点异常预警，标记待人工复核。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>客户异常胜率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户近 7 天交易胜率 > 80%，触发异常胜率预警，自动限制该客户日内开仓次数。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>客户异常盈利率监控</strong><div style="font-size:12px;color:var(--text-muted);">客户累计盈利金额 > 净入金（Deposit - Withdrawal）的 50%，触发异常盈利率预警。> 100% 自动限制出金。</div></div></li>
+      <li class="rule-item trigger"><span class="rule-bullet">🔵</span><div><strong>大额单笔交易监控</strong><div style="font-size:12px;color:var(--text-muted);">单笔交易额 ≥ 100,000 USDC 自动触发预警，需 10 分钟内人工复核。累计 24h 交易额 ≥ 500,000 USDC 自动限制开仓。</div></div></li>
+      <li class="rule-item warn"><span class="rule-bullet">🟡</span><div><strong>非交易时段大额交易</strong><div style="font-size:12px;color:var(--text-muted);">每日休市期间的单笔 ≥ 10,000 USDC 交易，触发非交易时段监控并自动延迟到开盘执行。</div></div></li>
     </ul>
   </div>
 </div>
@@ -396,12 +396,12 @@
     <span class="sop-arrow chevron">▼</span>
   </div>
   <div class="sop-body">
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">所有风险事件按「影响程度 × 发生概率」分级。默认评估维度：资金安全、合规风险、系统稳定性、声誉影响。</p>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">所有风险事件按「影响程度 × 发生概率」分级。评估维度：交易安全、客户资金安全、系统稳定性、市场影响。</p>
     <div class="class-grid">
-      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大资金损失或监管处罚</div><div class="class-items">• 单笔涉案金额 ≥ 5,000,000 USDC<br>• 备付金比例 < 10%<br>• 疑似洗钱/欺诈已发生<br>• <strong>响应：5 分钟</strong></div></div>
-      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重运营影响</div><div class="class-items">• 大额异常出金（1M-5M USDC）<br>• 备付金比例 10%-15%<br>• 批量退款/投诉事件<br>• <strong>响应：30 分钟</strong></div></div>
-      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 中额异常交易（100K-1M USDC）<br>• 新客户异常指标<br>• 退款率超标但可控<br>• <strong>响应：2 小时</strong></div></div>
-      <div class="class-card low"><div class="class-name">🟢 低 · Low</div><div class="class-desc">常规监控项，例行处理</div><div class="class-items">• 小额异常波动<br>• 测试/非生产环境告警<br>• 常规合规自查项<br>• <strong>响应：24 小时</strong></div></div>
+      <div class="class-card urgent"><div class="class-name">🔴 紧急 · Emergency</div><div class="class-desc">可能导致重大客户资金损失或系统性风险</div><div class="class-items">• 交易品种停价 > 30s<br>• 错价订单已成交<br>• 客户盈利率 > 净入金 100%<br>• <strong>响应：5 分钟</strong></div></div>
+      <div class="class-card high"><div class="class-name">🟠 高 · High</div><div class="class-desc">可能导致较大损失或严重影响交易</div><div class="class-items">• 停价 10-30s / 延迟 > 3s<br>• 滑点 > 2% 或 > 500 USDC<br>• 客户胜率 > 80%<br>• <strong>响应：30 分钟</strong></div></div>
+      <div class="class-card medium"><div class="class-name">🟡 中 · Medium</div><div class="class-desc">可控制的风险，需持续跟踪</div><div class="class-items">• 报价延迟 1-3s<br>• 滑点 1%-2%<br>• 客户盈利率 > 净入金 50%<br>• <strong>响应：2 小时</strong></div></div>
+      <div class="class-card low"><div class="class-name">🟢 低 · Low</div><div class="class-desc">常规监控项，例行处理</div><div class="class-items">• 偶发延迟 < 1s<br>• 小额滑点 (< 1%)<br>• 常规系统告警<br>• <strong>响应：24 小时</strong></div></div>
     </div>
   </div>
 </div>
@@ -414,14 +414,14 @@
     <div class="table-wrap"><table>
       <thead><tr><th>预警类型</th><th>触发条件</th><th>阈值</th><th>自动动作</th><th>通知方式</th></tr></thead>
       <tbody>
-        <tr><td>大额出金预警</td><td>单笔出金超过阈值</td><td>≥ 1,000,000 USDC</td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
-        <tr><td>拆分交易预警</td><td>1h内多笔合计超限</td><td>≥ 1,000,000 USDC</td><td>合并展示、人工确认</td><td>企业微信</td></tr>
-        <tr><td>备付金预警</td><td>备付金比例跌破阈值</td><td>< 20%</td><td>按级别限流/暂停出金</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>退款率预警</td><td>近7天退款率超标</td><td>≥ 15%</td><td>标记商户、暂停收款</td><td>邮件</td></tr>
-        <tr><td>新客户预警</td><td>首日交易额/笔数异常</td><td>≥ 100,000 USDC / ≥5笔</td><td>限制日交易额度</td><td>企业微信</td></tr>
-        <tr><td>关联账户预警</td><td>同IP多账户</td><td>≥ 3个账户</td><td>关联审查、限制出金</td><td>邮件</td></tr>
-        <tr><td>AML 制裁命中</td><td>交易对手命中制裁名单</td><td>命中即触发</td><td>立即冻结、上报合规</td><td>电话 + 企微 + 邮件</td></tr>
-        <tr><td>非营业时段预警</td><td>深夜大额交易</td><td>00-06时 ≥ 200K USDC</td><td>延迟结算、人工复核</td><td>企业微信</td></tr>
+        <tr><td>品种停价预警</td><td>任一品种连续停价超时</td><td>> 10s</td><td>暂停该品种交易、通知做市商</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>错价预警</td><td>报价偏离市场参考价</td><td>> 0.5%</td><td>暂停品种、撤销异常订单</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>价格延迟预警</td><td>报价延迟超过阈值</td><td>≥ 3s</td><td>切换备用报价源</td><td>企业微信</td></tr>
+        <tr><td>滑点预警</td><td>单笔交易滑点超限</td><td>> 2% 或 > 500 USDC</td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>异常胜率预警</td><td>客户近7天胜率异常高</td><td>> 80%</td><td>限制日内开仓次数</td><td>企业微信</td></tr>
+        <tr><td>异常盈利率预警</td><td>盈利超过净入金比例</td><td>> 50%</td><td>限制出金、标记账户</td><td>电话 + 企微 + 邮件</td></tr>
+        <tr><td>大额交易预警</td><td>单笔交易额超过阈值</td><td>≥ 100,000 USDC</td><td>标记待审、通知风控值班</td><td>企业微信 + 邮件</td></tr>
+        <tr><td>非交易时段预警</td><td>休市期间大额交易</td><td>休市期间 ≥ 10,000 USDC</td><td>延迟到开盘执行</td><td>企业微信</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -607,18 +607,18 @@ const STATUS_ORDER = { active: 0, pending: 1, escalated: 2, resolved: 3 };
 
 function getDefaultRisks() {
   return [
-    { id: 'RK-2026-042', desc: '商户 MC-01039 疑似拆分大额出金，连续3日累计出金12.8M，资金流向多个个人账户', level: 'emergency', owner: 'Rockey', status: 'active', foundDate: '2026-06-03', updated: '2026-06-05 18:32' },
-    { id: 'RK-2026-041', desc: '备付金账户余额跌破 15% 警戒线，当前比例 12.3%，需紧急补充', level: 'emergency', owner: 'Mark', status: 'escalated', foundDate: '2026-06-04', updated: '2026-06-05 14:15' },
-    { id: 'RK-2026-040', desc: '新入网商户 MC-01204 首日交易量异常激增至 3.45M，疑似批量注册套现', level: 'high', owner: 'Elaine', status: 'active', foundDate: '2026-06-05', updated: '2026-06-05 09:22' },
-    { id: 'RK-2026-039', desc: '跨境结算通道延迟上升，部分交易到达时间超过 SLA（T+1 → T+2），影响商户体验', level: 'high', owner: 'Willow', status: 'active', foundDate: '2026-06-02', updated: '2026-06-05 10:00' },
-    { id: 'RK-2026-038', desc: '某 API 商户接口调用量突增 300%，疑似被爬取或 API 密钥泄露', level: 'medium', owner: 'George', status: 'pending', foundDate: '2026-06-04', updated: '2026-06-04 16:00' },
-    { id: 'RK-2026-037', desc: '商户 MC-00988 近7天退款率 22%，超过 15% 阈值，涉及品类为虚拟商品', level: 'medium', owner: 'Elaine', status: 'active', foundDate: '2026-06-01', updated: '2026-06-04 16:45' },
-    { id: 'RK-2026-036', desc: '风控规则引擎 v2.3 灰度发布后偶发误拦截，影响正常商户交易成功率下降 1.2%', level: 'medium', owner: 'George', status: 'active', foundDate: '2026-05-30', updated: '2026-06-03 11:20' },
-    { id: 'RK-2026-035', desc: '商户 MC-00550 连续收到 5 笔消费者投诉（未授权扣款），已先行冻结', level: 'medium', owner: 'Rockey', status: 'escalated', foundDate: '2026-05-28', updated: '2026-06-02 09:15' },
-    { id: 'RK-2026-034', desc: '系统日志发现同 IP（203.0.113.x）关联 7 个账户，疑似团伙操作', level: 'low', owner: 'Rockey', status: 'pending', foundDate: '2026-06-03', updated: '2026-06-03 08:05' },
-    { id: 'RK-2026-033', desc: '月度 AML 合规自查报告中 2 项整改项逾期未关闭', level: 'low', owner: 'Mark', status: 'pending', foundDate: '2026-05-25', updated: '2026-06-01 17:00' },
-    { id: 'RK-2026-032', desc: '部分商户结算账户因银行渠道维护延迟入账，影响 ≤ T+1 SLA', level: 'low', owner: 'Willow', status: 'resolved', foundDate: '2026-05-31', updated: '2026-06-02 14:30' },
-    { id: 'RK-2026-031', desc: '监控看板数据源 API 偶发超时 2s+，影响实时性，需排查后端性能', level: 'low', owner: 'George', status: 'resolved', foundDate: '2026-05-29', updated: '2026-06-01 10:00' },
+    { id: 'RK-2026-042', desc: '客户 MC-01039 BTCUSDC 交易胜率异常高 87%，近7天盈利 128,000 USDC，超出入金金额', level: 'emergency', owner: 'Rockey', status: 'active', foundDate: '2026-06-03', updated: '2026-06-05 18:32' },
+    { id: 'RK-2026-041', desc: 'XAUUSD 交易品种连续停价 18s，超过 10s 预警阈值，影响正常交易', level: 'emergency', owner: 'Mark', status: 'escalated', foundDate: '2026-06-04', updated: '2026-06-05 14:15' },
+    { id: 'RK-2026-040', desc: 'USOIL 报价延迟 4.2s，超过 3s 预警阈值，已触发自动切换备用报价源', level: 'high', owner: 'Elaine', status: 'active', foundDate: '2026-06-05', updated: '2026-06-05 09:22' },
+    { id: 'RK-2026-039', desc: 'BTCUSDC 品种出现瞬时错价 0.7%，偏离市场参考价，2 笔订单以错价成交', level: 'high', owner: 'Willow', status: 'active', foundDate: '2026-06-02', updated: '2026-06-05 10:00' },
+    { id: 'RK-2026-038', desc: '客户 MC-00755 EURUSD 大额交易滑点 3.1%，滑点损失 1,860 USDC', level: 'medium', owner: 'George', status: 'pending', foundDate: '2026-06-04', updated: '2026-06-04 16:00' },
+    { id: 'RK-2026-037', desc: 'GBPUSD 报价延迟 2.1s，触发黄色提醒，需关注报价源稳定性', level: 'medium', owner: 'Elaine', status: 'active', foundDate: '2026-06-01', updated: '2026-06-04 16:45' },
+    { id: 'RK-2026-036', desc: '客户 MC-01039 累计盈利达净入金 65%，超过 50% 异常盈利率预警阈值', level: 'medium', owner: 'George', status: 'active', foundDate: '2026-05-30', updated: '2026-06-03 11:20' },
+    { id: 'RK-2026-035', desc: 'MC-00670 账户 EURUSD 近7天胜率 83%，触发异常胜率监控，已限制开仓', level: 'medium', owner: 'Rockey', status: 'escalated', foundDate: '2026-05-28', updated: '2026-06-02 09:15' },
+    { id: 'RK-2026-034', desc: 'USOIL 品种 06-05 出现 3 次间歇性停价（2s/5s/8s），累计超时需关注', level: 'low', owner: 'Rockey', status: 'pending', foundDate: '2026-06-03', updated: '2026-06-03 08:05' },
+    { id: 'RK-2026-033', desc: 'BTCUSDC 大单成交滑点监控显示 5 笔交易滑点 1.5%-2.5%，需核查流动性', level: 'low', owner: 'Mark', status: 'pending', foundDate: '2026-05-25', updated: '2026-06-01 17:00' },
+    { id: 'RK-2026-032', desc: '非交易时段检测到 3 笔大额交易（合计 35,000 USDC），已延迟至开盘执行', level: 'low', owner: 'Willow', status: 'resolved', foundDate: '2026-05-31', updated: '2026-06-02 14:30' },
+    { id: 'RK-2026-031', desc: 'XAUUSD 报价源 A 偶发延迟 1.5s+，备用源切换延迟不达标，需优化', level: 'low', owner: 'George', status: 'resolved', foundDate: '2026-05-29', updated: '2026-06-01 10:00' },
   ];
 }
 
@@ -967,28 +967,28 @@ function showToast(msg, type) {
 // Metrics card click → drill-down
 // ============================================================
 const SAMPLE_LARGE_WITHDRAWALS = [
-  ['W-2026-0605-01','MC-01039','商户收款','12,800,000 USDC','大额拆分规则','06-05 18:32','emergency'],
-  ['W-2026-0605-02','MC-01039','商户收款','3,200,000 USDC','大额拆分规则','06-05 18:30','emergency'],
-  ['W-2026-0605-03','MC-01039','商户收款','2,800,000 USDC','大额拆分规则','06-05 18:28','emergency'],
-  ['W-2026-0605-04','MC-01039','商户收款','4,000,000 USDC','大额拆分规则','06-05 18:25','emergency'],
-  ['W-2026-0605-05','MC-00821','备付金','5,200,000 USDC','备付金充足率','06-05 14:15','high'],
-  ['W-2026-0605-06','MC-01204','新注册客户','3,450,000 USDC','新客户监控','06-05 09:22','high'],
-  ['W-2026-0605-07','MC-00988','商户收款','2,100,000 USDC','退款率监控','06-04 16:45','medium'],
-  ['W-2026-0605-08','MC-00550','商户收款','1,850,000 USDC','投诉关联','06-04 14:20','medium'],
-  ['W-2026-0605-09','MC-01039','商户收款','1,600,000 USDC','大额拆分规则','06-04 11:15','emergency'],
-  ['W-2026-0605-10','MC-00755','跨境结算','1,200,000 USDC','刷单/测试识别','06-04 22:10','medium'],
-  ['W-2026-0605-11','MC-00670','个人收款','980,000 USDC','关联账户识别','06-04 09:30','low'],
-  ['W-2026-0605-12','MC-01112','API接入','750,000 USDC','接口频率限制','06-04 11:30','high'],
+  ['T-2026-0605-01','MC-01039','BTCUSDC','盈利 128,000 USDC','异常胜率监控','06-05 18:32','emergency'],
+  ['T-2026-0605-02','MC-01039','BTCUSDC','盈利 86,500 USDC','异常盈利率监控','06-05 18:30','emergency'],
+  ['T-2026-0605-03','MC-01039','ETHUSDC','盈利 45,200 USDC','异常胜率监控','06-05 18:28','emergency'],
+  ['T-2026-0605-04','MC-00821','XAUUSD','停价 18s','品种停价监控','06-05 14:15','high'],
+  ['T-2026-0605-05','MC-01204','USOIL','延迟 4.2s','价格延迟监控','06-05 09:22','high'],
+  ['T-2026-0605-06','MC-00755','EURUSD','滑点 3.1%','滑点监控','06-04 22:10','medium'],
+  ['T-2026-0605-07','MC-00988','GBPUSD','延迟 2.1s','价格延迟监控','06-04 16:45','medium'],
+  ['T-2026-0605-08','MC-00550','XAUUSD','滑点 2.5%','滑点监控','06-04 14:20','medium'],
+  ['T-2026-0605-09','MC-01039','BTCUSDC','大额 120,000 USDC','大额交易监控','06-04 11:15','emergency'],
+  ['T-2026-0605-10','MC-00670','EURUSD','胜率 83%','异常胜率监控','06-04 09:30','low'],
+  ['T-2026-0605-11','MC-01112','USOIL','大额 95,000 USDC','大额交易监控','06-04 11:30','high'],
+  ['T-2026-0605-12','MC-00670','BTCUSDC','滑点 1.8%','滑点监控','06-03 15:20','low'],
 ];
 
 const SAMPLE_ALL_ANOMALY = [
-  ['MC-2026-01039','商户收款账户','短时间内大额分散出金','12,800,000 USDC','大额拆分规则','emergency','06-05 18:32'],
-  ['MC-2026-00821','备付金账户','备付金比例跌破阈值','5,200,000 USDC','备付金充足率','high','06-05 14:15'],
-  ['MC-2026-01204','新注册客户','首日交易量异常激增','3,450,000 USDC','新客户监控','high','06-05 09:22'],
-  ['MC-2026-00755','跨境结算账户','频繁小额测试交易','86,000 USDC','刷单/测试识别','medium','06-04 22:10'],
-  ['MC-2026-00988','商户收款账户','退款率异常高','2,100,000 USDC','退款率监控','medium','06-04 16:45'],
-  ['MC-2026-01112','API接入商户','API调用频率异常','—','接口频率限制','low','06-04 11:30'],
-  ['MC-2026-00670','个人收款账户','同一IP多账户操作','580,000 USDC','关联账户识别','low','06-03 08:05'],
+  ['MC-2026-01039','BTCUSDC','客户胜率异常高 87%','盈利 128,000 USDC','异常胜率监控','emergency','06-05 18:32'],
+  ['MC-2026-00821','XAUUSD','交易品种停价 18s','—','品种停价监控','high','06-05 14:15'],
+  ['MC-2026-01204','USOIL','报价延迟 4.2s','—','价格延迟监控','high','06-05 09:22'],
+  ['MC-2026-00755','EURUSD','大额交易滑点 3.1%','滑点损失 1,860 USDC','滑点监控','medium','06-04 22:10'],
+  ['MC-2026-00988','GBPUSD','报价延迟 2.1s','—','价格延迟监控','medium','06-04 16:45'],
+  ['MC-2026-01112','BTCUSDC','客户盈利率异常高','盈利 62,000 USDC','异常盈利率监控','low','06-04 11:30'],
+  ['MC-2026-00670','EURUSD','客户胜率 83%','盈利 8,500 USDC','异常胜率监控','low','06-03 08:05'],
 ];
 
 const levelClassMap = { emergency:'level-emergency', high:'level-high', medium:'level-medium', low:'level-low' };
@@ -1000,23 +1000,41 @@ function generateMetricDetail(drillType) {
   const head = document.getElementById('metricDetailHead');
   const body = document.getElementById('metricDetailBody');
 
-  if (drillType === 'large-withdrawal') {
-    title.innerHTML = '🔺 大额异常出金明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">共 12 笔 · 合计 40,130,000 USDC</span>';
+  if (drillType === 'instrument-halt') {
+    title.innerHTML = '⏸️ 交易品种异常明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">停价 / 延迟 / 错价</span>';
+    head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>交易品种</th><th>异常描述</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
+    const halt_data = SAMPLE_LARGE_WITHDRAWALS.filter(r => r[4].includes('停价') || r[4].includes('延迟') || r[4].includes('错价'));
+    body.innerHTML = halt_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无品种异常事件 ✅</td></tr>'
+      : halt_data.map(r => `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`).join('');
+  } else if (drillType === 'slippage') {
+    title.innerHTML = '📉 大额滑点明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">滑点 > 2% 或 > 500 USDC</span>';
+    head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>交易品种</th><th>滑点详情</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
+    const slip_data = SAMPLE_LARGE_WITHDRAWALS.filter(r => r[4].includes('滑点'));
+    body.innerHTML = slip_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无滑点异常事件 ✅</td></tr>'
+      : slip_data.map(r => `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`).join('');
+  } else if (drillType === 'winrate') {
+    title.innerHTML = '🎯 异常胜率/盈利率客户 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">胜率 > 80% 或盈利率异常</span>';
+    head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>交易品种</th><th>异常描述</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
+    const wr_data = SAMPLE_LARGE_WITHDRAWALS.filter(r => r[4].includes('胜率') || r[4].includes('盈利率'));
+    body.innerHTML = wr_data.length === 0 ? '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">暂无异常客户 ✅</td></tr>'
+      : wr_data.map(r => `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`).join('');
+  } else if (drillType === 'large-withdrawal') {
+    title.innerHTML = '⏸️ 品种停价 / 异常交易明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">共 12 笔 · 合计 40,130,000 USDC</span>';
     head.innerHTML = '<tr><th>流水号</th><th>账户ID</th><th>账户类型</th><th>金额</th><th>触发规则</th><th>时间</th><th>等级</th></tr>';
     body.innerHTML = SAMPLE_LARGE_WITHDRAWALS.map(r =>
       `<tr><td style="color:var(--text-muted);">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="color:var(--danger);">${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td><span class="level-tag ${levelClassMap[r[6]]}">${levelNameMap[r[6]]}</span></td></tr>`
     ).join('');
   } else if (drillType === 'anomaly-accounts') {
-    title.innerHTML = '👤 异常账户明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">共 7 个异常账户</span>';
-    head.innerHTML = '<tr><th>账户ID</th><th>账户类型</th><th>异常类型</th><th>涉及金额</th><th>触发规则</th><th>等级</th><th>发现时间</th></tr>';
+    title.innerHTML = '🎯 异常交易账户明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">共 7 个异常事件</span>';
+    head.innerHTML = '<tr><th>账户ID</th><th>交易品种</th><th>异常类型</th><th>涉及金额</th><th>触发规则</th><th>等级</th><th>发现时间</th></tr>';
     body.innerHTML = SAMPLE_ALL_ANOMALY.map(r =>
       `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="color:var(--danger);">${r[3]}</td><td>${r[4]}</td><td><span class="level-tag ${levelClassMap[r[5]]}">${levelNameMap[r[5]]}</span></td><td>${r[6]}</td></tr>`
     ).join('');
   } else if (drillType === 'netflow') {
-    title.innerHTML = '💰 近7天出入金明细 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">单笔 ≥ 500,000 USDC</span>';
-    head.innerHTML = '<tr><th>日期</th><th>大额入金笔数</th><th>大额出金笔数</th><th>净流量</th><th>异常标注</th></tr>';
+    title.innerHTML = '💰 近7天大额交易笔数 <span style="font-size:12px;color:var(--text-muted);font-weight:400;">单笔 ≥ 100,000 USDC</span>';
+    head.innerHTML = '<tr><th>日期</th><th>开仓笔数</th><th>平仓笔数</th><th>净持仓</th><th>异常标注</th></tr>';
     const data = [
-      ['06-05','47','59','-12','⚠️ 净流出偏高'],
+      ['06-05','47','59','-12','⚠️ 净平仓偏高'],
       ['06-04','52','55','-3','—'],
       ['06-03','61','48','+13','—'],
       ['06-02','44','42','+2','—'],
