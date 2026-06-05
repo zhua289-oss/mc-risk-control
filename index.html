@@ -285,6 +285,7 @@
   <div class="header-right">
     <span class="live-dot"></span>
     <span style="font-size:12px;color:var(--success);">系统运行中</span>
+    <button class="btn btn-sm" onclick="clearLocalAndReload()" title="清除本地缓存并刷新">🗑️ 清缓存</button>
     <span class="last-update">更新于 <span id="updateTime">---</span></span>
   </div>
 </div>
@@ -920,6 +921,11 @@ function quickCreateRisk(desc, level, owner) {
 // ============================================================
 // 重置
 // ============================================================
+function clearLocalAndReload() {
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
 function resetAllData() {
   document.getElementById('confirmMsg').textContent = '确定要重置所有数据吗？这将恢复默认示例数据，所有修改将丢失。';
   document.getElementById('confirmBtn').onclick = () => {
